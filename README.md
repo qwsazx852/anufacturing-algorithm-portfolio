@@ -28,6 +28,7 @@ To showcase these algorithms in a real-world context, I implemented a comprehens
 
 ### 🔬 Provenance: Research to Production
 I initially prototyped and validated these algorithms in **MATLAB** to establish mathematical correctness before porting them to a production-grade Python microservice. This ensures the implementations are mathematically rigorous and optimized for performance.
+- **Legacy Research Code**: Available in the [`matlab_legacy/`](matlab_legacy/) directory for reference and validation.
 
 ---
 
@@ -60,6 +61,7 @@ The system follows a clean separation of concerns:
 ├── scripts/                # Utility scripts & comparisons
 ├── data/                   # Configuration & Dataset (Excel)
 ├── docs/                   # Documentation & Resume Guide
+├── matlab_legacy/          # Original Research Code (MATLAB)
 └── static/                 # Frontend Assets
 ```
 

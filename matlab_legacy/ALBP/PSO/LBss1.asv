@@ -1,0 +1,24 @@
+function SS = LBss1(i,GCT,Information,fxm_ans,L1,L2) %計算適應值
+
+
+add = 0;
+OR = [];
+tn = 0 ;%最小工作站數
+Ti = []; %各工作站工作時間
+for j = 1:nnz(fxm_ans{i})
+    if add+Information(fxm_ans{i}(j)) <= GCT
+       add =add+Information(fxm_ans{i}(j));
+    else
+        tn=tn+1;
+        Ti(tn) = add;
+        add = Information(fxm_ans{i}(j));
+    end
+end
+ tn=tn+1;
+%  SS= tn;%求最小工作站
+ 
+%  Ti(tn) = add;
+%  SS = (((sum((GCT-Ti).^2))/tn)^(1/2));%minSI
+ 
+Ti(tn) = CT;
+SS =(((sum((GCT-Ti).^2))/tn)^(1/2))*L1-(sum(Ti)/(tn*GCT))*L2;%學姊論文目標式minSI和最小工作站

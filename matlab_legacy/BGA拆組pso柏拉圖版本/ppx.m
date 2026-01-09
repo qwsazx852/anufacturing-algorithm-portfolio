@@ -1,0 +1,44 @@
+
+function [ee] = ppx(n,a,crossover,pp)
+
+ee=cell(1,length(a));
+% bb=[];
+C=[];
+G=[];
+i=0;
+for c=1:pp
+    if rand<crossover
+        
+        D=fix(rand(2,n)*2+1);
+           
+            b1=a{randperm(200,1)};
+            b2=a{randperm(200,1)};
+            for t =1:n%%
+
+                if D(t)==1
+                    C=[C,b1(1)];
+
+                    h=find(b2==b1(1));
+                    b1(1)=[];
+                    b2(h)=[];
+
+                else
+
+                    C=[C,b2(1)];
+                    j=find(b1==b2(1));
+                    b2(1)=[];
+                    b1(j)=[];
+                end
+
+            end
+
+            ee{c}=C;
+            
+            C=[];
+       
+    else
+        
+        ee{c}=a{c};
+
+    end
+end
