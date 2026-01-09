@@ -25,6 +25,11 @@ To showcase these algorithms in a production-ready context, I leveraged **AI-Ass
 - **Frontend Visualization**: Used modern web tools to build a glassmorphism dashboard for real-time convergence monitoring.
 *This approach demonstrates my ability to focus deep technical content while efficiently utilizing modern tools to deliver complete full-stack solutions.*
 
+### 🔬 Provenance: Research to Production
+I initially prototyped and validated these algorithms in **MATLAB** to establish mathematical correctness before porting them to a production-grade Python microservice.
+- **Legacy Research Code**: Available in the [`matlab_legacy/`](matlab_legacy/) directory.
+- **Scope**: Contains early experiments with BGA (Binary GA), NPSO, and different encoding schemes.
+
 ---
 
 ## 🔍 The Algorithms
@@ -43,7 +48,6 @@ I implemented and compared four distinct meta-heuristics from scratch (no "black
 ---
 
 ## �️ System Architecture
-
 The system follows a clean separation of concerns:
 
 ```

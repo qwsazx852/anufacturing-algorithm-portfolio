@@ -13,3 +13,6 @@ custom_config.xlsx
 current_config.xlsx
 converge_*.png
 convergence_*.png
+
+*.rar
+.DS_Store
