@@ -1,15 +1,22 @@
-from ga_solver import GeneticOptimizer, np
-from data_adapter import ConfigLoader
+import sys
 import os
+
+# Add parent directory to sys.path
+current_dir = os.path.dirname(os.path.abspath(__file__))
+parent_dir = os.path.dirname(current_dir)
+sys.path.append(parent_dir)
+
+from solvers.ga_solver import GeneticOptimizer
+from app.utils.data_adapter import ConfigLoader
+import numpy as np
 import time
 import matplotlib.pyplot as plt
 
 # ==========================================
 # Configuration Loading /讀取外部設定
 # ==========================================
-# 確保讀取的是腳本所在目錄下的 config.xlsx，避免執行路徑不同導致找不到檔案
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-CONFIG_FILE = os.path.join(BASE_DIR, "config.xlsx")
+# Config is in ../data/config.xlsx
+CONFIG_FILE = os.path.join(parent_dir, "data", "config.xlsx")
 
 def load_settings():
     """

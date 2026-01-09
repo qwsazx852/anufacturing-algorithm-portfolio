@@ -1,7 +1,14 @@
-import data_adapter
-from sa_solver import SASolver
-import numpy as np
+import sys
 import os
+
+# Add parent directory to sys.path
+current_dir = os.path.dirname(os.path.abspath(__file__))
+parent_dir = os.path.dirname(current_dir)
+sys.path.append(parent_dir)
+
+from app.utils import data_adapter
+from solvers.sa_solver import SASolver
+import numpy as np
 import time
 import matplotlib.pyplot as plt
 
@@ -9,8 +16,8 @@ def run_sa():
     print("=== 模擬退火 (Simulated Annealing) Workstation Minimization ===")
     
     # 1. 讀取設定檔
-    base_dir = os.path.dirname(os.path.abspath(__file__))
-    config_path = os.path.join(base_dir, 'config.xlsx')
+    # Config is in ../data/config.xlsx
+    config_path = os.path.join(parent_dir, 'data', 'config.xlsx')
     
     print(f"1. Loading parameters from {config_path}...")
     loader = data_adapter.ConfigLoader(config_path)
