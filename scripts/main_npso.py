@@ -32,7 +32,7 @@ def run_npso():
     history_metrics = [] # Profit, Carbon, HV
     
     for gen in range(generations):
-        best_perm, (best_profit, best_carbon) = npso.evolve()
+        best_perm, (best_profit, best_carbon), cut_idx = npso.evolve() # Unpack 3 values
         current_hv = npso.history_hv[-1]
         
         history_metrics.append((best_profit, best_carbon, current_hv))
@@ -43,14 +43,23 @@ def run_npso():
     end_time = time.time()
     
     # 3. Final Results
-    final_perm, (f1, f2) = npso.gbest_permutation, npso.gbest_score
+    final_perm, (f1, f2), best_cut = npso.gbest_permutation, npso.gbest_score, npso.gbest_cut_index
+    
+    disassembled = final_perm[:best_cut]
+    remaining = final_perm[best_cut:]
+    
     print("-" * 30)
     print("Optimization Completed!")
     print(f"Best Profit: {f1:.2f}")
     print(f"Best Carbon: {f2:.4f}")
     print(f"Hypervolume (Approximated): {npso.history_hv[-1]:.4f}")
-    print(f"Best Disassembly Sequence: {final_perm}")
-    print(f"Execution Time: {end_time - start_time:.4f} seconds")
+    
+    print("\n[Optimal Selective Disassembly Plan]")
+    print(f"Cut-Off Point: After {best_cut} parts")
+    print(f"Disassemble These ({len(disassembled)}): {disassembled}")
+    print(f"Leave These ({len(remaining)}):       {remaining}")
+    
+    print(f"\nExecution Time: {end_time - start_time:.4f} seconds")
     
     # 4. Plotting
     plot_npso_results(history_metrics, "NPSO Disassembly Line Balancing")

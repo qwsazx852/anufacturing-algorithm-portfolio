@@ -59,6 +59,7 @@ class NPSOSolver:
         self.gbest_score = (float('-inf'), float('inf'))
         self.gbest_metric = float('inf')
         self.gbest_permutation = None
+        self.gbest_cut_index = -1 # Store the optimal cut-off point
         
         self.history_hv = []
 
@@ -91,11 +92,11 @@ class NPSOSolver:
         """SPV Rule: Convert continuous position to permutation."""
         return list(np.argsort(x_vector) + 1)
 
-    def calculate_objectives(self, sequence: List[int]) -> Tuple[float, float, List[float]]:
+    def calculate_objectives(self, sequence: List[int]) -> Tuple[float, float, int]:
         """
-        Calculates (Profit, Carbon) for a given full sequence.
+        Calculates (Profit, Carbon, CutIndex) for a given full sequence.
         Replicates logic from fitness1.m and fitness2.m.
-        Returns: (Profit, Carbon, debug_info)
+        Returns: (Profit, Carbon, CutIndex)
         """
         # The sequence 'sequence' is a full disassembly order.
         # But we stop at some point.
@@ -116,9 +117,10 @@ class NPSOSolver:
         dist2 = np.sqrt((self.utopia[0] - res2[0])**2 + (self.utopia[1] - res2[1])**2)
         
         if dist1 <= dist2:
-            return res1[0], res1[1], []
+            # res1 is (f1, f2, k)
+            return res1
         else:
-            return res2[0], res2[1], []
+            return res2
 
     def _calculate_metrics_at_cut(self, sequence: List[int], cut_index: int) -> Tuple[float, float]:
         """
@@ -263,7 +265,7 @@ class NPSOSolver:
             f1, f2 = self._calculate_metrics_at_cut(sequence, k)
             if f1 > best_f1:
                 best_f1 = f1
-                best_res = (f1, f2)
+                best_res = (f1, f2, k)
         
         return best_res
 
@@ -298,7 +300,9 @@ class NPSOSolver:
                 best_ratio = ratio
                 best_cut = i
         
-        return self._calculate_metrics_at_cut(sequence, best_cut)
+        # Returns (f1, f2, best_cut) directly
+        f1, f2 = self._calculate_metrics_at_cut(sequence, best_cut)
+        return (f1, f2, best_cut)
 
     def evolve(self) -> Tuple[List[int], Tuple[float, float]]:
         """
@@ -311,7 +315,7 @@ class NPSOSolver:
             repaired_perm = self._repair_chromosome(perm)
             
             # Calculate Objectives
-            profit, carbon, _ = self.calculate_objectives(repaired_perm)
+            profit, carbon, cut_idx = self.calculate_objectives(repaired_perm)
             
             # Distance to Utopia (Metric for single-objective selection within PSO)
             # Minimize distance to [350, 0]
@@ -329,6 +333,7 @@ class NPSOSolver:
                 self.gbest_score = (profit, carbon)
                 self.gbest_X = self.X[i].copy()
                 self.gbest_permutation = repaired_perm[:]
+                self.gbest_cut_index = cut_idx
                 
         # 2. Update Velocity and Position (Standard PSO)
         r1 = np.random.rand(self.num_particles, self.num_jobs)
@@ -345,4 +350,4 @@ class NPSOSolver:
         hv = calculate_hypervolume_two(self.gbest_score, self.hv_samples)
         self.history_hv.append(hv)
         
-        return self.gbest_permutation, self.gbest_score
+        return self.gbest_permutation, self.gbest_score, self.gbest_cut_index
