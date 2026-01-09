@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Smart Scheduler Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: #0b1120;
+            background-image:
+                radial-gradient(at 0% 0%, rgba(56, 189, 248, 0.1) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(139, 92, 246, 0.1) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(236, 72, 153, 0.1) 0px, transparent 50%),
+                radial-gradient(at 0% 100%, rgba(34, 197, 94, 0.1) 0px, transparent 50%);
+            background-attachment: fixed;
+            color: #f8fafc;
+        }
+
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        .glass-panel:hover {
+            border-color: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        .input-group {
+            position: relative;
+        }
+
+        .input-group input {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            transition: all 0.2s;
+        }
+
+        .input-group input:focus {
+            background: rgba(15, 23, 42, 0.9);
+            border-color: #38bdf8;
+            box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2);
+        }
+
+        .btn-gradient {
+            background-size: 200% 200%;
+            animation: gradient-shift 3s ease infinite;
+            transition: transform 0.1s;
+        }
+
+        .btn-gradient:active {
+            transform: scale(0.98);
+        }
+
+        @keyframes gradient-shift {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(15, 23, 42, 0.4);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(71, 85, 105, 0.6);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(100, 116, 139, 0.8);
+        }
+
+        .loader {
+            width: 16px;
+            height: 16px;
+            border: 2px solid #fff;
+            border-bottom-color: transparent;
+            border-radius: 50%;
+            display: inline-block;
+            box-sizing: border-box;
+            animation: rotation 1s linear infinite;
+        }
+
+        @keyframes rotation {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body class="min-h-screen p-4 md:p-8 selection:bg-sky-500/30">
+
+    <div class="max-w-7xl mx-auto space-y-6">
+
+        <!-- Header -->
+        <header
+            class="flex flex-col md:flex-row justify-between items-end md:items-center pb-6 border-b border-slate-800/50">
+            <div class="flex items-center gap-4">
+                <a href="/"
+                    class="p-2 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition group"
+                    title="Back to Portfolio">
+                    <svg class="w-5 h-5 group-hover:-translate-x-1 transition-transform" fill="none"
+                        stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                    </svg>
+                </a>
+                <div>
+                    <h1
+                        class="text-4xl md:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-sky-400 via-indigo-400 to-purple-400 mb-2">
+                        AI Smart Scheduler
+                    </h1>
+                    <p class="text-slate-400 text-lg">Intelligent Manufacturing Optimization System</p>
+                </div>
+            </div>
+            <div class="mt-4 md:mt-0">
+                <span
+                    class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 mr-2 animate-pulse"></span>
+                    System Operational
+                </span>
+            </div>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+
+            <!-- LEFT PANEL: Controls -->
+            <div class="lg:col-span-4 space-y-6">
+
+                <!-- Data Source / Config -->
+                <div class="glass-panel rounded-2xl p-6">
+                    <div class="flex items-center gap-2 mb-4">
+                        <div class="p-2 bg-pink-500/10 rounded-lg">
+                            <svg class="w-5 h-5 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10">
+                                </path>
+                            </svg>
+                        </div>
+                        <h2 class="text-xl font-semibold text-slate-200">Data Source</h2>
+                    </div>
+
+                    <!-- Status Indicator -->
+                    <div
+                        class="mb-4 flex items-center justify-between bg-slate-800/50 p-3 rounded-lg border border-slate-700">
+                        <span class="text-xs text-slate-400 uppercase tracking-wide">Current Config</span>
+                        <span id="config-status" class="text-sm font-bold text-sky-400">Loading...</span>
+                    </div>
+
+                    <div class="space-y-3">
+                        <a href="config/download"
+                            class="block w-full text-center bg-slate-700/50 hover:bg-slate-700 text-slate-300 py-2 rounded-lg text-sm border border-slate-600 transition">
+                            ⬇ Download Template
+                        </a>
+
+                        <div class="relative">
+                            <input type="file" id="config-file" accept=".xlsx" class="hidden"
+                                onchange="uploadConfig(this)">
+                            <label for="config-file"
+                                class="cursor-pointer block w-full text-center bg-blue-600 hover:bg-blue-500 text-white py-2 rounded-lg text-sm transition font-medium">
+                                📤 Upload Custom Data
+                            </label>
+                        </div>
+
+                        <button onclick="resetConfig()"
+                            class="w-full text-center bg-red-500/10 hover:bg-red-500/20 text-red-400 py-2 rounded-lg text-sm border border-red-500/20 transition">
+                            ↺ Reset to Default
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Global Config (Existing) -->
+                <div class="glass-panel rounded-2xl p-6">
+                    <div class="flex items-center gap-2 mb-6">
+                        <div class="p-2 bg-blue-500/10 rounded-lg">
+                            <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z">
+                                </path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            </svg>
+                        </div>
+                        <h2 class="text-xl font-semibold text-slate-200">Global Config</h2>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="input-group">
+                            <label
+                                class="block text-xs font-medium text-slate-400 mb-1.5 uppercase tracking-wide">Population
+                                Size</label>
+                            <input type="number" id="pop_size" value="50"
+                                class="w-full px-4 py-2.5 rounded-xl text-slate-200 placeholder-slate-500 focus:outline-none">
+                        </div>
+                        <div class="input-group">
+                            <label
+                                class="block text-xs font-medium text-slate-400 mb-1.5 uppercase tracking-wide">Generations</label>
+                            <input type="number" id="generations" value="50"
+                                class="w-full px-4 py-2.5 rounded-xl text-slate-200 placeholder-slate-500 focus:outline-none">
+                        </div>
+                        <div class="input-group">
+                            <label class="block text-xs font-medium text-slate-400 mb-1.5 uppercase tracking-wide">Cycle
+                                Time (Overrides Excel)</label>
+                            <input type="number" id="cycle_time" value="20"
+                                class="w-full px-4 py-2.5 rounded-xl text-slate-200 placeholder-slate-500 focus:outline-none">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Algorithms -->
+                <div class="glass-panel rounded-2xl p-6">
+                    <div class="flex items-center gap-2 mb-6">
+                        <div class="p-2 bg-purple-500/10 rounded-lg">
+                            <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                            </svg>
+                        </div>
+                        <h2 class="text-xl font-semibold text-slate-200">Algorithms</h2>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3 mb-6">
+                        <button onclick="toggleSetup('ga')"
+                            class="btn-gradient bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white p-3 rounded-xl font-medium shadow-lg shadow-blue-500/20 text-sm transition-all">
+                            🧬 Genetic Algo
+                        </button>
+                        <button onclick="toggleSetup('pso')"
+                            class="btn-gradient bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-500 hover:to-fuchsia-500 text-white p-3 rounded-xl font-medium shadow-lg shadow-violet-500/20 text-sm transition-all">
+                            🐦 PSO
+                        </button>
+                        <button onclick="toggleSetup('aco')"
+                            class="btn-gradient bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-white p-3 rounded-xl font-medium shadow-lg shadow-amber-500/20 text-sm transition-all">
+                            🐜 Ant Colony
+                        </button>
+                        <button onclick="toggleSetup('sa')"
+                            class="btn-gradient bg-gradient-to-r from-rose-500 to-pink-600 hover:from-rose-400 hover:to-pink-500 text-white p-3 rounded-xl font-medium shadow-lg shadow-rose-500/20 text-sm transition-all">
+                            🔥 Sim. Anneal
+                        </button>
+                    </div>
+
+                    <button onclick="runCompare()"
+                        class="w-full btn-gradient bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-white p-3.5 rounded-xl font-bold shadow-lg shadow-emerald-500/20 text-sm transition-all flex items-center justify-center gap-2 mb-4 group">
+                        <svg class="w-4 h-4 group-hover:rotate-180 transition-transform" fill="none"
+                            stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
+                            </path>
+                        </svg>
+                        COMPARE ALL
+                        <span id="loader-compare" class="loader hidden"></span>
+                    </button>
+
+                    <!-- Advanced Settings Panel -->
+                    <div id="advanced-params" class="hidden animate-[fadeIn_0.3s_ease-out]">
+                        <div class="h-px bg-slate-700/50 my-4"></div>
+                        <div class="flex justify-between items-center mb-3">
+                            <h3 id="algo-title" class="text-sm font-bold text-slate-300 uppercase tracking-wider">GA
+                                Settings</h3>
+                            <button onclick="closeSetup()" class="text-slate-500 hover:text-slate-300"><svg
+                                    class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M6 18L18 6M6 6l12 12"></path>
+                                </svg></button>
+                        </div>
+
+                        <div id="form-content" class="space-y-3 mb-4">
+                            <!-- Dynamic Inputs -->
+                        </div>
+
+                        <button id="run-btn" onclick="executeRun()"
+                            class="w-full bg-slate-700 hover:bg-slate-600 text-white py-2.5 rounded-xl font-semibold transition-all flex justify-center items-center gap-2">
+                            <span>Start Single Run</span>
+                            <span id="loader-main" class="loader hidden"></span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT PANEL: Visualization -->
+            <div class="lg:col-span-8 space-y-6">
+
+                <!-- Stats Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="glass-panel p-5 rounded-2xl relative overflow-hidden group">
+                        <div class="absolute right-0 top-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                            <svg class="w-16 h-16 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                    d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
+                                </path>
+                            </svg>
+                        </div>
+                        <p class="text-slate-400 text-xs font-bold uppercase tracking-wider mb-1">Algorithm</p>
+                        <p id="res-algo" class="text-2xl font-bold text-white tracking-tight">Ready</p>
+                    </div>
+
+                    <div class="glass-panel p-5 rounded-2xl relative overflow-hidden group">
+                        <div class="absolute right-0 top-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                            <svg class="w-16 h-16 text-emerald-400" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                    d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10">
+                                </path>
+                            </svg>
+                        </div>
+                        <p class="text-slate-400 text-xs font-bold uppercase tracking-wider mb-1">Min Workstations</p>
+                        <p id="res-stations" class="text-3xl font-bold text-emerald-400 tracking-tight">-</p>
+                    </div>
+
+                    <div class="glass-panel p-5 rounded-2xl relative overflow-hidden group">
+                        <div class="absolute right-0 top-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                            <svg class="w-16 h-16 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <p class="text-slate-400 text-xs font-bold uppercase tracking-wider mb-1">Execution Time</p>
+                        <p id="res-time" class="text-2xl font-bold text-sky-400 tracking-tight">-</p>
+                    </div>
+                </div>
+
+                <!-- Chart Section -->
+                <div class="glass-panel p-6 rounded-2xl">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-lg font-semibold text-slate-200">Convergence Analysis</h3>
+                        <div class="flex gap-2 text-xs">
+                            <span class="flex items-center gap-1 text-slate-400"><span
+                                    class="w-2 h-2 rounded-full bg-slate-600"></span> Lower is better</span>
+                        </div>
+                    </div>
+                    <div class="relative h-64 md:h-80 w-full">
+                        <canvas id="resultChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Sequence / Output -->
+                <div class="glass-panel p-6 rounded-2xl">
+                    <h3 class="text-lg font-semibold text-slate-200 mb-4">Optimization Details</h3>
+                    <div id="res-sequence"
+                        class="font-mono text-sm leading-relaxed text-slate-300 bg-slate-950/50 p-4 rounded-xl border border-slate-800 overflow-x-auto whitespace-pre-wrap">
+                        Waiting for execution... Select an algorithm to begin.
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <footer class="text-center text-slate-600 text-sm pt-8">
+            <p>© 2025 AI Smart Manufacturing Scheduler. All Systems Nominal.</p>
+        </footer>
+
+    </div>
+
+    <script>
+        // Chart Configuration
+        Chart.defaults.color = '#64748b';
+        Chart.defaults.font.family = "'Outfit', sans-serif";
+
+        const ctx = document.getElementById('resultChart').getContext('2d');
+        let resultChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: []
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        align: 'end',
+                        labels: { color: '#94a3b8', usePointStyle: true, boxWidth: 6 }
+                    },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false,
+                        backgroundColor: 'rgba(15, 23, 42, 0.9)',
+                        titleColor: '#fff',
+                        bodyColor: '#cbd5e1',
+                        borderColor: 'rgba(148, 163, 184, 0.2)',
+                        borderWidth: 1,
+                        padding: 10,
+                        displayColors: true
+                    }
+                },
+                scales: {
+                    y: {
+                        grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                        ticks: { color: '#64748b' },
+                        title: { display: true, text: 'Workstations', color: '#475569' }
+                    },
+                    x: {
+                        grid: { display: false },
+                        ticks: { color: '#64748b', maxTicksLimit: 8 },
+                        title: { display: true, text: 'Iterations', color: '#475569' }
+                    }
+                },
+                interaction: {
+                    mode: 'nearest',
+                    axis: 'x',
+                    intersect: false
+                },
+                elements: {
+                    line: { tension: 0.3 },
+                    point: { radius: 0, hitRadius: 10, hoverRadius: 4 }
+                }
+            }
+        });
+
+        // App Logic
+        let currentAlgo = null;
+        const paramConfig = {
+            'ga': [
+                { id: 'crossover_rate', label: 'Crossover Rate', val: 0.8, step: 0.1 },
+                { id: 'mutation_rate', label: 'Mutation Rate', val: 0.1, step: 0.01 }
+            ],
+            'pso': [
+                { id: 'w', label: 'Inertia (w)', val: 0.7, step: 0.1 },
+                { id: 'c1', label: 'Cognitive (c1)', val: 2.0, step: 0.1 },
+                { id: 'c2', label: 'Social (c2)', val: 2.0, step: 0.1 }
+            ],
+            'aco': [
+                { id: 'alpha', label: 'Pheromone (α)', val: 1.0, step: 0.1 },
+                { id: 'beta', label: 'Heuristic (β)', val: 2.0, step: 0.1 },
+                { id: 'rho', label: 'Evaporation (ρ)', val: 0.1, step: 0.01 }
+            ],
+            'sa': [
+                { id: 'initial_temp', label: 'Initial Temp', val: 1000.0, step: 10 },
+                { id: 'cooling_rate', label: 'Cooling Rate', val: 0.99, step: 0.001 }
+            ]
+        };
+
+        function toggleSetup(algo) {
+            currentAlgo = algo;
+            const panel = document.getElementById('advanced-params');
+            panel.classList.remove('hidden');
+
+            document.getElementById('algo-title').innerText = `${algo} Configuration`;
+            const container = document.getElementById('form-content');
+            container.innerHTML = '';
+
+            paramConfig[algo].forEach(p => {
+                const div = document.createElement('div');
+                div.className = "input-group";
+                div.innerHTML = `
+                    <label class="block text-xs font-medium text-slate-400 mb-1">${p.label}</label>
+                    <input type="number" id="${p.id}" value="${p.val}" step="${p.step}" 
+                           class="w-full px-3 py-2 rounded-lg bg-slate-800/50 border border-slate-700 text-sm text-slate-200 focus:outline-none focus:border-blue-500">
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function closeSetup() {
+            document.getElementById('advanced-params').classList.add('hidden');
+            currentAlgo = null;
+        }
+
+        function getCommonPayload() {
+            return {
+                "pop_size": parseInt(document.getElementById('pop_size').value) || 50,
+                "generations": parseInt(document.getElementById('generations').value) || 50,
+                "cycle_time": parseInt(document.getElementById('cycle_time').value) || 20
+            };
+        }
+
+        async function executeRun() {
+            if (!currentAlgo) return;
+
+            const btn = document.getElementById('run-btn');
+            const loader = document.getElementById('loader-main');
+            btn.disabled = true;
+            loader.classList.remove('hidden');
+
+            let payload = getCommonPayload();
+
+            // Add Algo Params
+            paramConfig[currentAlgo].forEach(p => {
+                payload[p.id] = parseFloat(document.getElementById(p.id).value);
+            });
+
+            try {
+                // Use relative path
+                const res = await fetch(`optimize/${currentAlgo}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+
+                if (data.result) {
+                    updateSingleResult(data);
+                } else {
+                    document.getElementById('res-sequence').innerText = "Error: " + JSON.stringify(data);
+                }
+            } catch (e) {
+                console.error(e);
+                document.getElementById('res-sequence').innerText = "Network Error";
+            } finally {
+                btn.disabled = false;
+                loader.classList.add('hidden');
+            }
+        }
+
+        async function runCompare() {
+            closeSetup(); // Hide single setup
+            const loader = document.getElementById('loader-compare');
+            loader.classList.remove('hidden');
+
+            let payload = getCommonPayload();
+            // Use defaults for algorithms since we don't have separate UI inputs for all 4 at once
+            // Mix in default values manually if needed, or backend handles it? 
+            // The backend Pydantic model has default values, so usually fine.
+            // But we actually need to pass them effectively if we want to override.
+            // For simplicity, we just send common params + default algo params from UI defaults?
+            // Actually, let's just send common params. The backend model `OptimizationParams` has defaults for all fields.
+            // If we want to support editing them for comparison, UI would be too complex.
+            // So we rely on backend defaults OR we can grab current values from the `paramConfig` definition?
+            // Let's grab the default values relative to the "paramConfig" object above to ensure consistency.
+            Object.values(paramConfig).forEach(arr => {
+                arr.forEach(p => params = payload[p.id] = p.val);
+            });
+
+            try {
+                const res = await fetch(`optimize/compare`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+
+                if (data.result) {
+                    updateComparisonResult(data.result);
+                }
+            } catch (e) {
+                console.error(e);
+            } finally {
+                loader.classList.add('hidden');
+            }
+        }
+
+        function updateSingleResult(data) {
+            document.getElementById('res-algo').innerText = data.algorithm;
+            document.getElementById('res-stations').innerText = data.result.stations;
+            document.getElementById('res-time').innerText = data.time + 's';
+            document.getElementById('res-sequence').innerText =
+                `[START] → ${data.result.sequence.join(' → ')} → [END]`;
+
+            // Chart
+            const history = data.result.history;
+            // Downsample if needed
+            const labels = history.map((_, i) => i + 1);
+
+            resultChart.data.labels = labels;
+            resultChart.data.datasets = [{
+                label: `${data.algorithm} Convergence`,
+                data: history,
+                borderColor: '#38bdf8',
+                backgroundColor: 'rgba(56, 189, 248, 0.1)',
+                borderWidth: 2,
+                fill: true
+            }];
+            resultChart.update();
+        }
+
+        function updateComparisonResult(results) {
+            document.getElementById('res-algo').innerText = "Comparison";
+
+            // Find best
+            let bestStations = Infinity;
+            let bestAlgo = "";
+            let totalTime = 0;
+            let summaryText = "COMPARISON SUMMARY:\n\n";
+
+            // Chart Colors
+            const colors = {
+                'GA': '#3b82f6', // Blue
+                'PSO': '#8b5cf6', // Violet
+                'ACO': '#f59e0b', // Amber
+                'SA': '#f43f5e'   // Rose
+            };
+
+            const datasets = [];
+            let maxLen = 0;
+
+            results.forEach(r => {
+                if (r.stations < bestStations) {
+                    bestStations = r.stations;
+                    bestAlgo = r.algorithm;
+                }
+                totalTime += r.time;
+
+                summaryText += `${r.algorithm.padEnd(5)} | Stations: ${r.stations} | Time: ${r.time}s\n`;
+
+                if (r.history.length > maxLen) maxLen = r.history.length;
+
+                datasets.push({
+                    label: r.algorithm,
+                    data: r.history,
+                    borderColor: colors[r.algorithm] || '#fff',
+                    backgroundColor: 'transparent',
+                    borderWidth: 2,
+                    pointRadius: 0
+                });
+            });
+
+            document.getElementById('res-stations').innerText = bestStations + ` (${bestAlgo})`;
+            document.getElementById('res-time').innerText = totalTime.toFixed(4) + 's (Total)';
+            document.getElementById('res-sequence').innerText = summaryText + `\n🏆 WINNER: ${bestAlgo}`;
+
+            // Update Chart
+            resultChart.data.labels = Array.from({ length: maxLen }, (_, i) => i + 1);
+            resultChart.data.datasets = datasets;
+            resultChart.update();
+        }
+
+        // Config Management
+        async function checkConfigStatus() {
+            try {
+                const res = await fetch('config/status');
+                const data = await res.json();
+                const statusEl = document.getElementById('config-status');
+                if (data.source === 'custom') {
+                    statusEl.innerText = "Custom Data";
+                    statusEl.className = "text-sm font-bold text-amber-400";
+                } else {
+                    statusEl.innerText = "Default (18 jobs)";
+                    statusEl.className = "text-sm font-bold text-sky-400";
+                }
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        async function uploadConfig(input) {
+            if (input.files && input.files[0]) {
+                const formData = new FormData();
+                formData.append('file', input.files[0]);
+
+                try {
+                    const res = await fetch('config/upload', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    const result = await res.json();
+                    alert(result.message);
+                    checkConfigStatus();
+                } catch (e) {
+                    alert("Upload failed");
+                }
+                // Clear input
+                input.value = '';
+            }
+        }
+
+        async function resetConfig() {
+            if (!confirm("Reset to default configuration?")) return;
+            try {
+                const res = await fetch('config/reset', { method: 'POST' });
+                const result = await res.json();
+                alert(result.message);
+                checkConfigStatus();
+            } catch (e) {
+                alert("Reset failed");
+            }
+        }
+
+        // Init
+        checkConfigStatus();
+    </script>
+</body>
+
+</html>
