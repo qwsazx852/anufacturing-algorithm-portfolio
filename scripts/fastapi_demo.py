@@ -1,13 +1,20 @@
+import sys
+import os
+
+# Add parent directory to sys.path
+current_dir = os.path.dirname(os.path.abspath(__file__))
+parent_dir = os.path.dirname(current_dir)
+sys.path.append(parent_dir)
+
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
-import data_adapter
-from ga_solver import GeneticOptimizer
-from pso_solver import PSOSolver
-from aco_solver import ACOSolver
-from sa_solver import SASolver
-import os
+from app.utils import data_adapter
+from solvers.ga_solver import GeneticOptimizer
+from solvers.pso_solver import PSOSolver
+from solvers.aco_solver import ACOSolver
+from solvers.sa_solver import SASolver
 import time
 
 # 初始化 FastAPI App
@@ -52,8 +59,8 @@ class OptimizationParams(BaseModel):
 
 # Helper to load config
 def get_config():
-    base_dir = os.path.dirname(os.path.abspath(__file__))
-    config_path = os.path.join(base_dir, 'config.xlsx')
+    # base_dir is scripts/, config is in data/ (../data)
+    config_path = os.path.join(parent_dir, 'data', 'config.xlsx')
     if not os.path.exists(config_path):
         return None
     loader = data_adapter.ConfigLoader(config_path)
