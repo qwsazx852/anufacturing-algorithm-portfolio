@@ -16,6 +16,8 @@ This solution implements and compares four state-of-the-art meta-heuristic algor
 3.  **Ant Colony Optimization (ACO)**: Pheromone-based construction of job sequences.
 4.  **Simulated Annealing (SA)**: Physics-inspired probabilistic search.
 5.  **Multi-Objective PSO (NPSO)**: Advanced solver for Disassembly Line Balancing, optimizing both **Profit** and **Carbon Footprint** simultaneously using Hypervolume metrics.
+6.  **Block-Based GA**: Uses logic-preserving block crossover and greedy mutation for high-quality sequence mining.
+7.  **Kang & Genetic Algorithm (K&G)**: Implements Precedence Preserving Crossover (PPX) for strict constraint handling.
 
 The core engine is wrapped in a **FastAPI Microservice**, allowing precise real-time scheduling via a RESTful API.
 
@@ -72,6 +74,8 @@ This will generate:
 | **PSO** | ~1.00s | Continuous space search | If SPV encoding suits the problem |
 | **ACO** | ~3.00s | Constructive heuristics | Very strictly constrained graphs |
 | **NPSO (Multi-Obj)** | ~1.50s | Pareto Optimization (Profit vs Carbon) | Reverse Logistics, Green Manufacturing |
+| **Block-Based GA** | ~6.00s | Block Crossover + Greedy Mutation | High-precision local search |
+| **K&G (PPX)** | ~0.50s | Precedence Preserving Crossover | Fast constraint-compliant search |
 
 ---
 

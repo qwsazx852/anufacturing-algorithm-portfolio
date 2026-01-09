@@ -11,6 +11,9 @@ from solvers.ga_solver import GeneticOptimizer
 from solvers.pso_solver import PSOSolver
 from solvers.aco_solver import ACOSolver
 from solvers.sa_solver import SASolver
+from solvers.npso_solver import NPSOSolver
+from solvers.block_ga_solver import BlockGASolver
+from solvers.kg_solver import KGSolver
 import os
 import time
 import matplotlib.pyplot as plt
@@ -39,7 +42,7 @@ def run_comparison():
     # ==========================================
     # 1. Genetic Algorithm (GA)
     # ==========================================
-    print("\n[1/4] Running GA...")
+    print("\n[1/7] Running GA...")
     ga = GeneticOptimizer(num_jobs, pop_size, 0.8, 0.1, constraints, time_info, cycle_time)
     ga.initialize_population()
     
@@ -62,7 +65,7 @@ def run_comparison():
     # ==========================================
     # 2. Particle Swarm Optimization (PSO)
     # ==========================================
-    print("[2/4] Running PSO...")
+    print("[2/7] Running PSO...")
     pso = PSOSolver(num_jobs, pop_size, constraints, time_info, cycle_time)
     
     start_time = time.time()
@@ -83,7 +86,7 @@ def run_comparison():
     # ==========================================
     # 3. Ant Colony Optimization (ACO)
     # ==========================================
-    print("[3/4] Running ACO...")
+    print("[3/7] Running ACO...")
     # Matches main_aco.py settings
     num_ants = 50 
     aco = ACOSolver(num_jobs, num_ants, constraints, time_info, cycle_time)
@@ -104,7 +107,7 @@ def run_comparison():
     # ==========================================
     # 4. Simulated Annealing (SA)
     # ==========================================
-    print("[4/4] Running SA...")
+    print("[4/7] Running SA...")
     sa = SASolver(num_jobs, constraints, time_info, cycle_time, 
                   initial_temp=1000.0, cooling_rate=0.99, stopping_temp=0.1)
     
