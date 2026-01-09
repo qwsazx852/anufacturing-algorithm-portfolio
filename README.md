@@ -1,73 +1,76 @@
-# 🚀 AI Smart Portfolio Hub
+# 🧠 Meta-Heuristic Scheduling Optimization Engine
+> **A Comparative Research Platform for Solving NP-Hard Manufacturing Problems**
 
-A centralized hub showcasing advanced AI optimization algorithms applied to manufacturing scheduling problems. Built with **FastAPI** for the backend and a modern **Glassmorphism UI** for the frontend.
+![Python](https://img.shields.io/badge/Python-3.12-blue?style=flat&logo=python)
+![Algorithm](https://img.shields.io/badge/Focus-Algorithm%20Design-orange?style=flat&logo=scipy)
+![Architecture](https://img.shields.io/badge/Architecture-AI--Assisted%20Microservice-green?style=flat)
 
+## � Project Focus & Role
+**Positioning**: Algorithm Engineer / Optimization Researcher
 
+This project was developed to demonstrate **advanced algorithmic problem solving** applied to real-world manufacturing constraints (Assembly Line Balancing Problem type-1). 
 
-## 🌟 Featured Projects
+### 👨‍💻 My Contribution: Core Algorithmic Logic
+My primary focus and manual implementation efforts were dedicated to the **mathematical modeling and optimization engine** located in the `*_solver.py` modules. Key technical challenges I solved include:
 
-### 1. Smart Manufacturing Scheduler (`/scheduler`)
-An intelligent assembly line optimization system that solves the "Assembly Line Balancing Problem" (ALBP) using four different meta-heuristic algorithms.
-> **[📖 Read Detailed Algorithm Documentation](ALGORITHM_DETAILS.md)**
+1.  **Constraint Handling**: Designed a robust `Transitive Closure` matrix ensuring all generated schedules respect strict precedence constraints (Job A → Job B).
+2.  **Encoding Strategies**:
+    *   **GA**: Implemented custom 2-point crossover and "Repair" gene operators to maintain valid topological sorts.
+    *   **PSO**: Adapted continuous particle velocity vectors to discrete job sequences using the **SPV (Smallest Position Value)** rule.
+3.  **Convergence Tuning**: Fine-tuned hyperparameters (cooling rate, pheromone evaporation, inertia weights) to balance *Exploration* vs *Exploitation*.
 
-- **🧬 Genetic Algorithm (GA)**
-- **🐦 Particle Swarm Optimization (PSO)**
-- **🐜 Ant Colony Optimization (ACO)**
-- **🔥 Simulated Annealing (SA)**
-
-**Key Features:**
-- **Dynamic Visualization**: Real-time convergence charts using Chart.js.
-- **Comparison Mode**: Run all algorithms sequentially to compare performance.
-- **Custom Data Injection**: Upload your own Excel (`.xlsx`) configuration to solve different scheduling problems.
-
-## 🛠️ Tech Stack
-- **Backend**: Python 3.12, FastAPI, Uvicorn
-- **Frontend**: HTML5, TailwindCSS, Chart.js, Vanilla JS
-- **Data**: Pandas, Excel (OpenPyXL)
-
-## 📦 Installation & Usage
-
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/your-username/ai-portfolio-hub.git
-   cd ai-portfolio-hub
-   ```
-
-2. **Install Dependencies**
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-3. **Run the Application**
-   ```bash
-   python main_portfolio.py
-   ```
-
-4. **Access the Dashboard**
-   Open your browser and navigate to:
-   - **Portfolio Hub**: [http://localhost:8000](http://localhost:8000)
-   - **Scheduler App**: [http://localhost:8000/scheduler](http://localhost:8000/scheduler)
-
-## 📂 Project Structure
-```
-.
-├── main_portfolio.py       # Entry point (Portfolio Hub)
-├── project_scheduler.py    # Scheduler Module (FastAPI Router)
-├── data_adapter.py         # Excel Data Handler
-├── config.xlsx             # Default Dataset
-├── requirements.txt        # Python Dependencies
-├── static/                 # Frontend Assets
-│   ├── index.html          # Scheduler UI
-│   ├── portfolio.html      # Portfolio Landing Page
-│   └── ...
-└── *_solver.py             # Algorithm Implementations (GA, PSO, ACO, SA)
-```
-
-## 📝 Custom Data Format
-To use your own data, upload an Excel file with the following sheets:
-- `Parameters`: Global settings (NUM_JOBS, etc.)
-- `Constraints`: Precedence relations (Predecessor, Successor)
-- `JobTimes`: Processing time for each job (JobId, Time)
+### ⚡ Engineering Methodology: AI-Accelerated Development ("Vibe Coding")
+To showcase these algorithms in a production-ready context, I leveraged **AI-Assisted Development** for the peripheral infrastructure:
+- **FastAPI Backend**: Rapidly scaffolded a high-performance REST API to expose the solvers.
+- **Frontend Visualization**: Used modern web tools to build a glassmorphism dashboard for real-time convergence monitoring.
+*This approach demonstrates my ability to focus deep technical content while efficiently utilizing modern tools to deliver complete full-stack solutions.*
 
 ---
-*Created by Jun - 2025*
+
+## 🔍 The Algorithms
+
+I implemented and compared four distinct meta-heuristics from scratch (no "black-box" optimization libraries):
+
+| Algorithm | Key Implementation Detail | Why I Chose It |
+| :--- | :--- | :--- |
+| **Genetic Algorithm (GA)** | Custom `Rank Selection` & `Order Crossover (OX)` | Best general performance for combinatorial problems. |
+| **Particle Swarm (PSO)** | **SPV Rule** implementation | To test continuous-to-discrete mapping efficiency. |
+| **Ant Colony (ACO)** | Probabilistic **Roulette Wheel** construction | Strong performance in graph-path based problems. |
+| **Simulated Annealing (SA)** | Boltzmann distribution acceptance probability | Baseline for single-solution trajectory search. |
+
+> **[📖 View Detailed Algorithmic Documentation & Benchmarks](ALGORITHM_DETAILS.md)**
+
+---
+
+## �️ System Architecture
+
+The system follows a clean separation of concerns:
+
+```
+├── 🧠 Core Solvers (My Key Focus)
+│   ├── ga_solver.py      # Genetic Evolutionary Logic
+│   ├── pso_solver.py     # Swarm Intelligence / SPV Logic
+│   ├── aco_solver.py     # Pheromone Matrix Logic
+│   └── sa_solver.py      # Probabilistic Search Logic
+│
+├── 🔌 Service Layer (AI-Scaffolded)
+│   ├── fastapi_demo.py   # REST Endpoints
+│   └── static/           # Visualization Dashboard
+│
+└── 📊 Data Layer
+    └── Constraint Matrix & Job Times (Excel/Pandas)
+```
+
+## 🚀 Quick Start
+
+1.  **Install & Run**:
+    ```bash
+    pip install -r requirements.txt
+    python main_portfolio.py
+    ```
+2.  **Explore**:
+    *   **Dashboard**: `http://localhost:8000/scheduler` (Run algorithms & visualize results)
+    *   **API Docs**: `http://localhost:8000/docs`
+
+---
+*Created by [Jun] - 2025*
