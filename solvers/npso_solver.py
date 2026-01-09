@@ -3,7 +3,7 @@ import random
 import numpy as np
 from typing import List, Tuple, Dict, Optional
 from .problem_data import StaplerData
-from .multi_objective_utils import calculate_hypervolume_two, generate_hypervolume_samples
+from .multi_objective_utils import calculate_hypervolume_two, generate_hypervolume_samples, compute_pareto_front
 from .pso_solver import PSOSolver
 
 class NPSOSolver:
@@ -17,7 +17,7 @@ class NPSOSolver:
     """
     
     def __init__(self, num_particles: int = 100, generations: int = 100, 
-                 w: float = 0.8, c1: float = 0.5, c2: float = 0.5):
+                 w: float = 0.8, c1: float = 0.5, c2: float = 0.5, data_class=None):
         self.num_particles = num_particles
         self.generations = generations
         self.w = w
@@ -25,7 +25,8 @@ class NPSOSolver:
         self.c2 = c2
         
         # Helper Data
-        self.data = StaplerData
+        from .problem_data import StaplerData, get_problem_data
+        self.data = data_class if data_class else StaplerData
         self.num_jobs = self.data.NUM_PARTS
         
         # Precompute Precedence Matrix (copied from other solvers)
@@ -351,3 +352,22 @@ class NPSOSolver:
         self.history_hv.append(hv)
         
         return self.gbest_permutation, self.gbest_score, self.gbest_cut_index
+
+    def get_pareto_front(self) -> List[Tuple[float, float]]:
+        """
+        Returns the simplified Pareto Front from the final swarm positions.
+        """
+        population_scores = []
+        for i in range(self.num_particles):
+            # Evaluate current particle position
+            perm = self._decode_position(self.X[i])
+            perm = self._repair_chromosome(perm)
+            profit, carbon, _ = self.calculate_objectives(perm)
+            population_scores.append((profit, carbon))
+            
+        # Also include pbest scores as they might be better than current X
+        for i in range(self.num_particles):
+            if self.pbest_scores[i][0] != float('-inf'):
+                population_scores.append(self.pbest_scores[i])
+                
+        return compute_pareto_front(population_scores)

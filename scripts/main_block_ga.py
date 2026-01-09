@@ -10,7 +10,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from solvers.block_ga_solver import BlockGASolver
 
 def run_block_ga():
-    print("=== Block-Based GA (多目標) 拆解線平衡優化 ===")
+    print("=== Block-Based GA (多目標) 選擇性拆解規劃優化 (Selective Disassembly Planning) ===")
     print("目標: Stapler (n=18)")
     print("特色: 區塊交配 (Block Crossover) + 貪婪突變 (Greedy Mutation)")
     

@@ -3,7 +3,7 @@ import random
 import numpy as np
 from typing import List, Tuple, Dict, Optional
 from .problem_data import StaplerData
-from .multi_objective_utils import calculate_hypervolume_two, generate_hypervolume_samples
+from .multi_objective_utils import calculate_hypervolume_two, generate_hypervolume_samples, compute_pareto_front
 import copy
 
 class BlockGASolver:
@@ -17,7 +17,7 @@ class BlockGASolver:
     """
     
     def __init__(self, population_size: int = 100, generations: int = 100, 
-                 crossover_rate: float = 0.8, mutation_rate: float = 0.1, block_size_ratio: float = 0.4):
+                 crossover_rate: float = 0.8, mutation_rate: float = 0.1, block_size_ratio: float = 0.4, data_class=None):
         self.population_size = population_size
         self.generations = generations
         self.crossover_rate = crossover_rate
@@ -25,7 +25,8 @@ class BlockGASolver:
         self.block_size_ratio = block_size_ratio
         
         # Helper Data
-        self.data = StaplerData
+        from .problem_data import StaplerData
+        self.data = data_class if data_class else StaplerData
         self.num_jobs = self.data.NUM_PARTS
         
         # Precompute Precedence Matrix
@@ -517,3 +518,14 @@ class BlockGASolver:
         self.history_hv.append(hv)
         
         return self.gbest_permutation, self.gbest_score, self.gbest_cut_index
+
+    def get_pareto_front(self) -> List[Tuple[float, float]]:
+        """
+        Returns the Pareto Front from the final population.
+        """
+        population_scores = []
+        for chrom in self.population:
+            profit, carbon, _ = self.calculate_objectives(chrom)
+            population_scores.append((profit, carbon))
+            
+        return compute_pareto_front(population_scores)

@@ -12,7 +12,7 @@ import time
 import matplotlib.pyplot as plt
 
 def run_npso():
-    print("=== NPSO (多目標) 拆解線平衡優化演算法 ===")
+    print("=== NPSO (多目標) 選擇性拆解規劃優化演算法 (Selective Disassembly Planning) ===")
     print("目標產品: 釘書機 (n=18)")
     print("優化目標: 1. 極大化利潤 (Profit)  2. 極小化碳足跡 (Carbon)")
     
@@ -62,7 +62,7 @@ def run_npso():
     print(f"\n執行時間: {end_time - start_time:.4f} 秒")
     
     # 4. Plotting
-    plot_npso_results(history_metrics, "NPSO 拆解線平衡優化")
+    plot_npso_results(history_metrics, "NPSO 選擇性拆解規劃優化")
 
 def plot_npso_results(history, title):
     import platform

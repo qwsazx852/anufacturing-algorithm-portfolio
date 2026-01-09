@@ -1,74 +1,234 @@
 
-from typing import List, Dict, Tuple
+import numpy as np
+from typing import List, Dict, Tuple, Type
 
 class StaplerData:
     """
     Data for the Stapler Disassembly Case Study (n=18).
     Source: MATLAB fitness1.m / fitness2.m
     """
-    
-    # 1. Basic Problem Size
     NUM_PARTS = 18
+    CYCLE_TIME = 15
     
-    # 2. Liaison Relationships (Component IDs in disassembly logic) -> "Dc"
-    # Note: These values seem to be the Component IDs themselves or a mapping.
-    # In fitness1.m: Dc = [18,10,16,17,3,14,2,9,5,6,7,15,11,12,13,1,8,4]
+    # Original specific mapping
     DC_SEQUENCE = [18, 10, 16, 17, 3, 14, 2, 9, 5, 6, 7, 15, 11, 12, 13, 1, 8, 4]
     
-    # 3. Disassembly Costs (Per Component?) -> "DC2"
-    # Corresponds to DC_SEQUENCE
     DISASSEMBLY_COSTS = [
         0.9297, 0.911, 0.797, 0.797, 0.797, 0.797, 0.482, 0.294, 0.266, 0.266, 
         0.224, 0.1727, 0.1727, 0.1727, 0.1354, 0.0234, 0.0234, 0.0234
     ]
     
-    # 4. Component Weights (kg) -> "gw"
-    # Indexes presumably 1-based in MATLAB, so index 0 is Part 1.
     WEIGHTS = [
         0.015, 0.005, 0.003, 0.008, 0.0025, 0.003, 0.0013, 0.006, 0.002, 
         0.003, 0.002, 0.009, 0.0021, 0.0012, 0.0025, 0.003, 0.003, 0.004
     ]
     
-    # 5. Component Costs (New Part Cost) -> "mc"
     NEW_PART_COSTS = [
         25, 5, 2, 25, 10, 8, 7, 10, 8, 2, 5, 20, 5, 5, 7, 2, 2, 2
     ]
     
-    # 6. Carbon Coefficients -> "cc" 
-    # (Used for remanufacturing carbon calc)
     CARBON_COEFFS = [
         0.31, 0.31, 0.43, 0.43, 0.12, 0.43, 0.12, 0.31, 0.43, 
         0.43, 0.31, 0.31, 0.12, 0.31, 0.31, 0.31, 0.31, 0.43
     ]
     
-    # 7. Operation Sets (1-based IDs from MATLAB)
-    # We will convert to 0-based in logic or keep 1-based and handle carefully.
-    REUSE = [2, 5, 7, 9, 13]
-    RECYCLE = [1, 3, 10, 14, 15, 16, 17, 18]
-    REMANUFACTURING = [4, 6, 8, 11]
-    TRASH = [12] # inferred from 't' variable in fitness1.m
-    
-    # 8. Constants
-    TOTAL_DISASSEMBLY_COST_REF = 7.2844 # 'c'
-    CARBON_COEFF_DISASSEMBLY = 0.509 # 'Cs'
-    RECYCLE_REVENUE_RATE = 0.005 # 5 NTD/kg ? (Code says 0.005)
+    REUSE = [2-1, 5-1, 7-1, 9-1, 13-1]
+    RECYCLE = [1-1, 3-1, 10-1, 14-1, 15-1, 16-1, 17-1, 18-1]
+    REMANUFACTURING = [4-1, 6-1, 8-1, 11-1]
+    TRASH = [12-1]
+
+    TOTAL_DISASSEMBLY_COST_REF = 7.2844 
+    CARBON_COEFF_DISASSEMBLY = 0.509 
+    RECYCLE_REVENUE_RATE = 0.005 
     PROCESSING_COST_FACTOR = 1.5
     
-    # 9. Tooling Data (Approximate based on T1, T2 in PSO_line_balance.m)
-    # T1 seems to be Tool Type ID for each job position in a sequence? 
-    # Actually T1 length is 18. It maps Job ID to Tool ID?
-    # T1=[3 1 2 3 4 3 3 3 3 3 1 1 1 2 4 2 2 3]
-    JOB_TOOL_MAPPING = [3, 1, 2, 3, 4, 3, 3, 3, 3, 3, 1, 1, 1, 2, 4, 2, 2, 3] # Job 1->Tool 3, Job 2->Tool 1...
-    
-    # T2=[2 -2 -2 2 -2 -1 1 2 1 -2 2 -2 -2 -2 -2 -2 -2 -3]
-    # Direction mappings? Job 1 -> Dir 2...
+    JOB_TOOL_MAPPING = [3, 1, 2, 3, 4, 3, 3, 3, 3, 3, 1, 1, 1, 2, 4, 2, 2, 3]
     JOB_DIRECTION_MAPPING = [2, -2, -2, 2, -2, -1, 1, 2, 1, -2, 2, -2, -2, -2, -2, -2, -2, -3]
 
-    # Precedence Constraints (from PSO_line_balance.m)
-    # 1-based pairs (Pre, Suc)
-    # Disassembly Precedence
     CONSTRAINTS = [
         (3, 2), (3, 1), (4, 5), (4, 8), (5, 7), (5, 6), (6, 9), (7, 9), 
         (8, 6), (10, 12), (11, 12), (13, 12), (14, 1), (14, 4), (15, 12), 
         (16, 15), (17, 15), (18, 10), (18, 11), (18, 13)
     ]
+    
+    OPERATION_TIMES = [10 for _ in range(18)] 
+
+
+class CeilingFanData:
+    """
+    Data for Ceiling Fan (n=26)
+    Source: User Provided MATLAB Code
+    """
+    NUM_PARTS = 26
+    CYCLE_TIME = 1000 
+    
+    # 1-to-1 mapping for solvers to index costs correctly
+    DC_SEQUENCE = list(range(1, 27))
+    
+    CONSTRAINTS = [
+        (5, 1), (5, 2), (5, 3), (5, 4), (6, 4), (11, 7), (11, 18), (12, 7), (12, 18), 
+        (15, 7), (15, 18), (16, 7), (16, 18), (19, 22), (19, 23), (19, 24), (20, 22), 
+        (20, 23), (20, 24), (21, 22), (21, 23), (21, 24), (26, 25), (4, 7), (25, 17), 
+        (7, 8), (7, 9), (18, 17), (8, 10), (8, 14), (9, 10), (9, 14), (17, 14), 
+        (10, 13), (14, 13)
+    ]
+
+    JOB_TOOL_MAPPING = [2, 2, 2, 1, 1, 1, 1, 1, 1, 3, 
+                        1, 1, 3, 3, 1, 1, 1, 1, 1, 1, 
+                        1, 1, 1, 1, 4, 2]
+
+    JOB_DIRECTION_MAPPING = [2, 3, -3, 3, 2, 2, 3, 3, 3, 3, 
+                             3, 3, -3, -3, -3, -3, -3, -3, -3, -3, 
+                             -3, -3, -3, -3, -3, -3]
+
+    DISASSEMBLY_COSTS = [
+        0.9297, 0.911, 0.797, 0.797, 0.797, 0.797, 0.482, 0.294, 0.266, 0.266, 
+        0.224, 0.1727, 0.1727, 0.1727, 0.1354, 0.0234, 0.0234, 0.0234, 0.224, 
+        0.1727, 0.1727, 0.1727, 0.1354, 0.0234, 0.0234, 0.0234
+    ]
+
+    WEIGHTS = [
+        0.161, 0.026, 0.081, 0.0127, 0.002, 0.002, 0.407, 0.006, 0.006, 0.305, 
+        0.006, 0.006, 1.356, 0.389, 0.006, 0.006, 0.305, 0.201, 0.006, 0.006, 
+        0.006, 0.168, 0.168, 0.168, 0.007, 0.0061
+    ]
+
+    REUSE_IDS = [3, 4, 7, 10, 13, 14, 17, 18, 25] # 1-based
+    RECYCLE_IDS = [5, 6, 8, 9, 11, 12, 19, 20, 21]
+    REMAN_IDS = [15, 16, 22, 23, 24]
+    
+    # Python 0-based conversion
+    REUSE = [x - 1 for x in REUSE_IDS]
+    RECYCLE = [x - 1 for x in RECYCLE_IDS]
+    REMANUFACTURING = [x - 1 for x in REMAN_IDS]
+    
+    _all_ops = set(range(26))
+    _reuse_set = set(REUSE)
+    _recycle_set = set(RECYCLE)
+    _reman_set = set(REMANUFACTURING)
+    TRASH = list(_all_ops - _reuse_set - _recycle_set - _reman_set)
+    TRASH.sort()
+
+    NEW_PART_COSTS = [
+        50, 10, 40, 70, 5, 5, 220, 4, 4, 300, 
+        4, 4, 350, 250, 2, 2, 100, 120, 4, 4, 
+        4, 200, 200, 200, 40, 40
+    ]
+
+    CARBON_COEFFS = [
+        0.01932, 0.01932, 0.00972, 0.01524, 0.00086, 0.00086, 0.04884, 0.00072, 0.00072, 0.03660, 
+        0.00072, 0.00072, 0.16272, 0.04668, 0.00258, 0.00258, 0.03660, 0.02412, 0.00072, 0.00072, 
+        0.00072, 0.05208, 0.05208, 0.05208, 0.00840, 0.00732
+    ]
+
+    TOTAL_DISASSEMBLY_COST_REF = 141.133
+    CARBON_COEFF_DISASSEMBLY = 0.509
+    RECYCLE_REVENUE_RATE = 0.005 # from provided snippet? Usually 0.005
+    PROCESSING_COST_FACTOR = 1.5
+
+    OPERATION_TIMES = [10 for _ in range(26)] # Placeholder for Assembly
+
+
+class PrinterData:
+    """
+    Data for Printer (n=52)
+    Source: User Provided MATLAB Code
+    """
+    NUM_PARTS = 52
+    CYCLE_TIME = 1000
+    
+    DC_SEQUENCE = list(range(1, 53))
+
+    CONSTRAINTS = [
+        (16, 50), (13, 20), (13, 19), (27, 42), (1, 46), (8, 9), (5, 6), (45, 50), 
+        (36, 52), (1, 45), (27, 28), (13, 25), (33, 41), (13, 24), (13, 21), (13, 22), 
+        (1, 2), (2, 5), (4, 18), (5, 27), (2, 27), (27, 38), (27, 31), (1, 3), 
+        (12, 13), (27, 40), (27, 41), (27, 43), (27, 37), (31, 36), (1, 47), 
+        (26, 27), (5, 18), (1, 51), (10, 11), (5, 8), (5, 10), (13, 14), (28, 44), 
+        (13, 23), (28, 29), (27, 39), (49, 50), (3, 17), (48, 51), (19, 24), 
+        (20, 25), (3, 4), (28, 30), (32, 40), (34, 42), (35, 43), (21, 24), 
+        (14, 23), (2, 4), (26, 37), (29, 30), (5, 7), (27, 36), (3, 15), 
+        (3, 12), (22, 25)
+    ]
+
+    JOB_TOOL_MAPPING = [
+        1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 
+        1, 1, 2, 1, 1, 2, 2, 1, 2, 2, 1, 2, 2, 2, 2, 2, 2, 1, 2, 2, 
+        2, 2, 2, 2, 1, 2, 2, 2, 2, 1, 2, 2
+    ]
+
+    JOB_DIRECTION_MAPPING = [
+        2, 2, 2, -2, 1, 1, -1, 2, 1, 1, 1, -1, 2, 2, 1, -2, -2, -2, -2, 2, 
+        2, 2, 2, 2, 2, -2, 2, 2, -2, 2, -2, 1, 1, 1, 1, 1, -2, -2, 1, 2, 
+        2, 2, 2, -2, 2, 3, -3, 3, 2, 2, -3, 2
+    ]
+
+    DISASSEMBLY_COSTS = [
+        0.9297, 0.911, 0.797, 0.797, 0.797, 0.797, 0.482, 0.294, 0.266, 0.266, 
+        0.224, 0.1727, 0.1727, 0.1727, 0.1354, 0.0234, 0.0234, 0.0234, 0.224, 
+        0.1727, 0.1727, 0.1727, 0.1354, 0.0234, 0.0234, 0.0234, 0.9297, 0.911, 
+        0.797, 0.797, 0.797, 0.797, 0.482, 0.294, 0.266, 0.266, 0.224, 0.1727, 
+        0.1727, 0.1727, 0.1354, 0.0234, 0.0234, 0.0234, 0.224, 0.1727, 0.1727, 
+        0.1727, 0.1354, 0.0234, 0.0234, 0.0234
+    ]
+
+    WEIGHTS = [
+        0.5395, 0.0210, 0.0043, 0.1560, 0.1230, 0.0530, 0.0020, 0.0120, 0.0042, 0.0900, 
+        0.0030, 0.0122, 0.0132, 0.0034, 0.0225, 0.2672, 0.0031, 0.0170, 0.0005, 0.0005, 
+        0.0030, 0.0030, 0.0001, 0.0030, 0.0030, 0.0002, 0.2697, 0.0150, 20.0350, 0.0020, 
+        0.1540, 0.0025, 0.0025, 0.0025, 0.0025, 0.0980, 0.0030, 0.0220, 0.0900, 0.0041, 
+        0.0041, 0.0041, 0.0041, 0.0010, 0.7110, 0.1621, 0.0813, 0.0231, 0.5897, 0.5342, 
+        0.0893, 0.0743
+    ]
+
+    REUSE_IDS = [1, 4, 5, 6, 8, 9, 10, 14, 16, 17, 23, 24, 25, 26, 27, 29, 31, 32, 33, 34, 35, 36, 37, 39, 45, 47, 48, 49, 50, 51, 52]
+    RECYCLE_IDS = [7, 19, 20, 28, 30, 44]
+    REMAN_IDS = [15, 38, 40, 41, 42, 43, 21, 22, 13, 12, 46]
+    
+    REUSE = [x - 1 for x in REUSE_IDS]
+    RECYCLE = [x - 1 for x in RECYCLE_IDS]
+    REMANUFACTURING = [x - 1 for x in REMAN_IDS]
+    
+    _all_ops = set(range(52))
+    _reuse_set = set(REUSE)
+    _recycle_set = set(RECYCLE)
+    _reman_set = set(REMANUFACTURING)
+    TRASH = list(_all_ops - _reuse_set - _recycle_set - _reman_set)
+    TRASH.sort()
+
+    NEW_PART_COSTS = [
+        90, 20, 20, 100, 30, 100, 100, 75, 66, 35, 
+        2, 6, 6, 10, 300, 200, 5, 2, 3, 3, 
+        6, 6, 3, 4, 4, 1, 80, 80, 3, 120, 
+        12, 5, 5, 5, 5, 30, 25, 300, 80, 6, 
+        6, 6, 6, 25, 45, 6, 30, 90, 30, 30, 
+        35, 650
+    ]
+
+    CARBON_COEFFS = [
+        0.231985, 0.009030, 0.001849, 0.067080, 0.052890, 0.022790, 0.000860, 0.005160, 0.001806, 0.003870, 
+        0.001290, 0.005246, 0.005676, 0.001462, 0.009675, 0.114896, 0.001333, 0.00731, 0.000215, 0.000215, 
+        0.00129, 0.00129, 0.000043, 0.00129, 0.00129, 0.000086, 0.115971, 0.00645, 0.01505, 0.00086, 
+        0.06622, 0.001075, 0.001075, 0.001075, 0.001075, 0.04214, 0.00129, 0.00946, 0.0387, 0.001763, 
+        0.001763, 0.001763, 0.001763, 0.00043, 0.30573, 0.069703, 0.034959, 0.009933, 0.253571, 0.229706, 
+        0.038399, 0.031949
+    ]
+
+    TOTAL_DISASSEMBLY_COST_REF = 195.5464
+    CARBON_COEFF_DISASSEMBLY = 0.509
+    RECYCLE_REVENUE_RATE = 0.005
+    PROCESSING_COST_FACTOR = 1.5
+    
+    OPERATION_TIMES = [10 for _ in range(52)] 
+
+
+def get_problem_data(name: str):
+    """Factory to get dataset by name."""
+    name = name.lower()
+    if 'fan' in name or '26' in name:
+        return CeilingFanData
+    elif 'print' in name or '52' in name:
+        return PrinterData
+    else:
+        # Default to Stapler
+        return StaplerData

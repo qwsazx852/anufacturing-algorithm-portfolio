@@ -10,7 +10,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from solvers.kg_solver import KGSolver
 
 def run_kg():
-    print("=== K&G (Kang & GA) 拆解線平衡優化 ===")
+    print("=== K&G (Kang & GA) 選擇性拆解規劃優化 (Selective Disassembly Planning) ===")
     print("目標: Stapler (n=18)")
     print("特色: PPX (Precedence Preserving Crossover) 保持優先權關係")
     
