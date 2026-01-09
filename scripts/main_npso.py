@@ -12,9 +12,9 @@ import time
 import matplotlib.pyplot as plt
 
 def run_npso():
-    print("=== NPSO (Multi-Objective) Disassembly Line Balancing ===")
-    print("Target: Stapler (n=18)")
-    print("Objectives: Maximizing Profit (f1) vs Minimizing Carbon (f2)")
+    print("=== NPSO (多目標) 拆解線平衡優化演算法 ===")
+    print("目標產品: 釘書機 (n=18)")
+    print("優化目標: 1. 極大化利潤 (Profit)  2. 極小化碳足跡 (Carbon)")
     
     # 1. Initialize Saver
     # Default settings from MATLAB: Pop=100, Gen=100 (or 1000)
@@ -25,7 +25,7 @@ def run_npso():
         w=0.8, c1=0.5, c2=0.5
     )
     
-    print(f"2. Running Optimization for {generations} generations...")
+    print(f"2. 開始執行優化 (共 {generations} 代)...")
     
     start_time = time.time()
     
@@ -38,7 +38,7 @@ def run_npso():
         history_metrics.append((best_profit, best_carbon, current_hv))
         
         if (gen + 1) % 10 == 0:
-            print(f"   Gen {gen+1}: Profit={best_profit:.2f}, Carbon={best_carbon:.4f}, HV={current_hv:.4f}")
+            print(f"   第 {gen+1} 代: 利潤={best_profit:.2f}, 碳足跡={best_carbon:.4f}, HV={current_hv:.4f}")
             
     end_time = time.time()
     
@@ -49,20 +49,20 @@ def run_npso():
     remaining = final_perm[best_cut:]
     
     print("-" * 30)
-    print("Optimization Completed!")
-    print(f"Best Profit: {f1:.2f}")
-    print(f"Best Carbon: {f2:.4f}")
-    print(f"Hypervolume (Approximated): {npso.history_hv[-1]:.4f}")
+    print("優化完成 (Optimization Completed)!")
+    print(f"最佳利潤 (Best Profit): {f1:.2f}")
+    print(f"最佳碳足跡 (Best Carbon): {f2:.4f}")
+    print(f"Hypervolume (近似值): {npso.history_hv[-1]:.4f}")
     
-    print("\n[Optimal Selective Disassembly Plan]")
-    print(f"Cut-Off Point: After {best_cut} parts")
-    print(f"Disassemble These ({len(disassembled)}): {disassembled}")
-    print(f"Leave These ({len(remaining)}):       {remaining}")
+    print("\n[最佳選擇性拆裝規劃 (Optimal Selective Disassembly Plan)]")
+    print(f"建議中止點: 拆解第 {best_cut} 個零件後停止")
+    print(f"執行拆解 ({len(disassembled)}): {disassembled}")
+    print(f"保留/丟棄 ({len(remaining)}):       {remaining}")
     
-    print(f"\nExecution Time: {end_time - start_time:.4f} seconds")
+    print(f"\n執行時間: {end_time - start_time:.4f} 秒")
     
     # 4. Plotting
-    plot_npso_results(history_metrics, "NPSO Disassembly Line Balancing")
+    plot_npso_results(history_metrics, "NPSO 拆解線平衡優化")
 
 def plot_npso_results(history, title):
     import platform
@@ -80,23 +80,23 @@ def plot_npso_results(history, title):
     fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(10, 10))
     
     # Plot 1: Objectives Convergence
-    ax1.plot(profit, label='Profit (Maximize)', color='blue')
-    ax1.set_ylabel('Profit', color='blue')
+    ax1.plot(profit, label='利潤 (Profit - Maximize)', color='blue')
+    ax1.set_ylabel('利潤 (Profit)', color='blue')
     ax1.tick_params(axis='y', labelcolor='blue')
     
     ax1_twin = ax1.twinx()
-    ax1_twin.plot(carbon, label='Carbon (Minimize)', color='red', linestyle='--')
-    ax1_twin.set_ylabel('Carbon Footprint', color='red')
+    ax1_twin.plot(carbon, label='碳足跡 (Carbon - Minimize)', color='red', linestyle='--')
+    ax1_twin.set_ylabel('碳足跡 (Carbon Footprint)', color='red')
     ax1_twin.tick_params(axis='y', labelcolor='red')
     
-    ax1.set_title(f'{title} - Objectives')
-    ax1.set_xlabel('Generation')
+    ax1.set_title(f'{title} - 目標函數收斂圖')
+    ax1.set_xlabel('代數 (Generation)')
     ax1.grid(True, alpha=0.3)
     
     # Plot 2: Hypervolume
     ax2.plot(hv, label='Hypervolume (Quality)', color='green')
-    ax2.set_title(f'{title} - Hypervolume')
-    ax2.set_xlabel('Generation')
+    ax2.set_title(f'{title} - Hypervolume 指標')
+    ax2.set_xlabel('代數 (Generation)')
     ax2.set_ylabel('Hypervolume (Dominated Ratio)')
     ax2.grid(True)
     
