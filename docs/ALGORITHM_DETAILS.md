@@ -1,5 +1,5 @@
 # Smart Manufacturing Schedule Optimizer
-> **Automated Job Shop Scheduling System using Meta-Heuristic Algorithms (GA, PSO, ACO, SA)**
+> **Automated Job Shop Scheduling & Disassembly Line Balancing System using Meta-Heuristic Algorithms**
 
 ![Python](https://img.shields.io/badge/Python-3.12-blue?style=flat&logo=python)
 ![FastAPI](https://img.shields.io/badge/FastAPI-Service-green?style=flat&logo=fastapi)
@@ -15,6 +15,7 @@ This solution implements and compares four state-of-the-art meta-heuristic algor
 2.  **Particle Swarm Optimization (PSO)**: Swarm intelligence using SPV (Smallest Position Value) rule.
 3.  **Ant Colony Optimization (ACO)**: Pheromone-based construction of job sequences.
 4.  **Simulated Annealing (SA)**: Physics-inspired probabilistic search.
+5.  **Multi-Objective PSO (NPSO)**: Advanced solver for Disassembly Line Balancing, optimizing both **Profit** and **Carbon Footprint** simultaneously using Hypervolume metrics.
 
 The core engine is wrapped in a **FastAPI Microservice**, allowing precise real-time scheduling via a RESTful API.
 
@@ -47,14 +48,14 @@ pip install numpy pandas matplotlib fastapi uvicorn openpyxl
 cd GA
 
 # Start the server (Dev mode)
-uvicorn fastapi_demo:app --reload
+python main.py
 ```
 Access the Interactive API Docs at: **http://127.0.0.1:8000/docs**
 
 ### 2. Run Comparative Analysis
 To see which algorithm performs best on your dataset:
 ```bash
-python compare_algorithms.py
+python scripts/compare_algorithms.py
 ```
 This will generate:
 -   `convergence_comparison.png`: A graph showing how quickly each algorithm finds the optimal solution.
@@ -70,6 +71,7 @@ This will generate:
 | **Genetic Algorithm (GA)** | ~0.30s | Robust population search | Complex constraints, large scale |
 | **PSO** | ~1.00s | Continuous space search | If SPV encoding suits the problem |
 | **ACO** | ~3.00s | Constructive heuristics | Very strictly constrained graphs |
+| **NPSO (Multi-Obj)** | ~1.50s | Pareto Optimization (Profit vs Carbon) | Reverse Logistics, Green Manufacturing |
 
 ---
 
