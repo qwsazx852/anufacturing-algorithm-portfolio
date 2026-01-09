@@ -50,7 +50,7 @@ def run_nsga2(params: DisassemblyParams):
     front.sort(key=lambda x: x[0])
     
     return {
-        "algorithm": "NSGA-II (True)",
+        "algorithm": "NSGA-II (Standard)",
         "result": {
             "hypervolume": hv_history[-1],
             "history": hv_history,
@@ -82,7 +82,7 @@ def run_nsga2_legacy(params: DisassemblyParams):
     front.sort(key=lambda x: x[0])
     
     return {
-        "algorithm": "NSGA-II (Legacy)",
+        "algorithm": "NSGA-II (Baseline)",
         "result": {
             "hypervolume": hv_history[-1],
             "history": hv_history,

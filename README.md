@@ -19,16 +19,15 @@ My primary focus and manual implementation efforts were dedicated to the **mathe
     *   **PSO**: Adapted continuous particle velocity vectors to discrete job sequences using the **SPV (Smallest Position Value)** rule.
 3.  **Convergence Tuning**: Fine-tuned hyperparameters (cooling rate, pheromone evaporation, inertia weights) to balance *Exploration* vs *Exploitation*.
 
-### ⚡ Engineering Methodology: AI-Accelerated Development ("Vibe Coding")
-To showcase these algorithms in a production-ready context, I leveraged **AI-Assisted Development** for the peripheral infrastructure:
-- **FastAPI Backend**: Rapidly scaffolded a high-performance REST API to expose the solvers.
-- **Frontend Visualization**: Used modern web tools to build a glassmorphism dashboard for real-time convergence monitoring.
-*This approach demonstrates my ability to focus deep technical content while efficiently utilizing modern tools to deliver complete full-stack solutions.*
+### ⚡ Engineering Methodology: Production-Grade Development
+To showcase these algorithms in a real-world context, I implemented a comprehensive full-stack architecture:
+- **FastAPI Backend**: High-performance REST API exposing the optimization solvers.
+- **Frontend Visualization**: Modern, responsive dashboard for real-time convergence monitoring and interactive experimentation.
+
+*This approach demonstrates my ability to bridge the gap between theoretical algorithm design and practical software engineering.*
 
 ### 🔬 Provenance: Research to Production
-I initially prototyped and validated these algorithms in **MATLAB** to establish mathematical correctness before porting them to a production-grade Python microservice.
-- **Legacy Research Code**: Available in the [`matlab_legacy/`](matlab_legacy/) directory.
-- **Scope**: Contains early experiments with BGA (Binary GA), NPSO, and different encoding schemes.
+I initially prototyped and validated these algorithms in **MATLAB** to establish mathematical correctness before porting them to a production-grade Python microservice. This ensures the implementations are mathematically rigorous and optimized for performance.
 
 ---
 
@@ -61,7 +60,6 @@ The system follows a clean separation of concerns:
 ├── scripts/                # Utility scripts & comparisons
 ├── data/                   # Configuration & Dataset (Excel)
 ├── docs/                   # Documentation & Resume Guide
-├── matlab_legacy/          # Original Research Code (MATLAB)
 └── static/                 # Frontend Assets
 ```
 

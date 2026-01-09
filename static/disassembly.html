@@ -63,7 +63,7 @@
             <div class="glass-panel p-6 rounded-2xl border-l-4 border-purple-500">
                 <h3 class="text-slate-400 text-sm uppercase tracking-wider mb-1">NSGA-II Performance</h3>
                 <p class="text-3xl font-bold text-slate-100">Robust & Stable</p>
-                <p class="text-sm text-purple-400 mt-2">Legacy: 0.9300 | True: 0.9330</p>
+                <p class="text-sm text-purple-400 mt-2">Baseline: 0.9300 | Standard: 0.9330</p>
             </div>
 
             <div class="glass-panel p-6 rounded-2xl border-l-4 border-sky-500">
@@ -90,8 +90,8 @@
                             <select id="algoSelect" class="input-field">
                                 <option value="compare">Compare All (6 Algos)</option>
                                 <option value="pso_ppx">PSO + PPX (Champion)</option>
-                                <option value="nsga2">NSGA-II (True)</option>
-                                <option value="nsga2_legacy">NSGA-II (Legacy)</option>
+                                <option value="nsga2">NSGA-II (Standard)</option>
+                                <option value="nsga2_legacy">NSGA-II (Baseline)</option>
                                 <option value="kg">K&G (Scalarized)</option>
                                 <option value="npso">NPSO (Scalarized)</option>
                                 <option value="block_ga">Block-Based GA</option>
@@ -262,8 +262,8 @@
             let paretoDatasets = [];
 
             const colors = {
-                'NSGA-II (True)': '#a855f7', // Purple
-                'NSGA-II (Legacy)': '#f97316', // Orange
+                'NSGA-II (Standard)': '#a855f7', // Purple
+                'NSGA-II (Baseline)': '#f97316', // Orange
                 'PSO+PPX': '#06b6d4', // Cyan
                 'K&G': '#22c55e', // Green
                 'NPSO': '#ec4899', // Pink
