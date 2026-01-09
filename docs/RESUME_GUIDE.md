@@ -54,8 +54,9 @@
 當面試官問到這個專案時，您的敘述邏輯應該是：
 
 1.  **"I identified a problem..."** (製造業排程很難，是 NP-Hard 問題...)
-2.  **"I built the core engine..."** (我手寫了 GA/PSO 等演算法，處理了最難的 Constraints 矩陣，這是我花 80% 時間的地方...)
-3.  **"I delivered a product..."** (為了展示效果，我用 AI 輔助快速搭建了 Web 介面。這顯示我不只懂演算法，也有軟體工程思維。)
+2.  **"Research to Production..."** (我最初用 MATLAB 驗證了演算法的數學正確性，確認可行後，再將其移植 (Porting) 到 Python 進行產品化開發。這顯示我有紮實的研究基礎，也有落地的工程能力。)
+3.  **"I built the core engine..."** (我手寫了 GA/PSO 等演算法，處理了最難的 Constraints 矩陣...)
+4.  **"I delivered a product..."** (為了展示效果，我用 AI 輔助快速搭建了 Web 介面。這顯示我不只懂演算法，也有軟體工程思維。)
 
 ---
 *Created by Antigravity for Jun - 2026*

@@ -1,9 +1,16 @@
-import data_adapter
-from ga_solver import GeneticOptimizer
-from pso_solver import PSOSolver
-from aco_solver import ACOSolver
-from sa_solver import SASolver
-import numpy as np
+import sys
+import os
+
+# Add parent directory to sys.path to identify 'solvers' and 'app'
+current_dir = os.path.dirname(os.path.abspath(__file__))
+parent_dir = os.path.dirname(current_dir)
+sys.path.append(parent_dir)
+
+from app.utils import data_adapter
+from solvers.ga_solver import GeneticOptimizer
+from solvers.pso_solver import PSOSolver
+from solvers.aco_solver import ACOSolver
+from solvers.sa_solver import SASolver
 import os
 import time
 import matplotlib.pyplot as plt
@@ -12,8 +19,9 @@ def run_comparison():
     print("=== Algorithm Comparison: GA vs PSO vs ACO vs SA ===")
     
     # 1. Load Config
-    base_dir = os.path.dirname(os.path.abspath(__file__))
-    config_path = os.path.join(base_dir, 'config.xlsx')
+    # 1. Load Config
+    # base_dir is scripts/, config is in data/ (../data)
+    config_path = os.path.join(parent_dir, 'data', 'config.xlsx')
     
     loader = data_adapter.ConfigLoader(config_path)
     config = loader.load_config()

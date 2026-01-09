@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import os
 
 def create_sample_excel():
     """
@@ -32,7 +33,12 @@ def create_sample_excel():
     df_constraints = pd.DataFrame(constraints_data)
     
     # 寫入 Excel 檔案
-    output_file = "config.xlsx"
+    # 存到 ../data/config.xlsx
+    base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    data_dir = os.path.join(base_dir, 'data')
+    if not os.path.exists(data_dir):
+        os.makedirs(data_dir)
+    output_file = os.path.join(data_dir, "config.xlsx")
     with pd.ExcelWriter(output_file, engine='openpyxl') as writer:
         df_params.to_excel(writer, sheet_name="Parameters", index=False)
         df_times.to_excel(writer, sheet_name="JobTimes", index=False)

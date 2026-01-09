@@ -1,11 +1,11 @@
 from fastapi import APIRouter, UploadFile, File
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
-import data_adapter
-from ga_solver import GeneticOptimizer
-from pso_solver import PSOSolver
-from aco_solver import ACOSolver
-from sa_solver import SASolver
+from app.utils import data_adapter
+from solvers.ga_solver import GeneticOptimizer
+from solvers.pso_solver import PSOSolver
+from solvers.aco_solver import ACOSolver
+from solvers.sa_solver import SASolver
 import os
 import shutil
 import time
@@ -40,9 +40,13 @@ class OptimizationParams(BaseModel):
 
 # Helper to load config
 def get_config_path():
-    base_dir = os.path.dirname(os.path.abspath(__file__))
-    custom_path = os.path.join(base_dir, 'custom_config.xlsx')
-    default_path = os.path.join(base_dir, 'config.xlsx')
+    # current file is in app/routers/
+    # config is in data/ (up 2 levels)
+    base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    data_dir = os.path.join(base_dir, 'data')
+    
+    custom_path = os.path.join(data_dir, 'custom_config.xlsx')
+    default_path = os.path.join(data_dir, 'config.xlsx')
     
     if os.path.exists(custom_path):
         return custom_path, "custom"

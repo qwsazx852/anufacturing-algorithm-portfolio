@@ -47,22 +47,22 @@ I implemented and compared four distinct meta-heuristics from scratch (no "black
 
 ---
 
-## �️ System Architecture
+## ️ System Architecture
 The system follows a clean separation of concerns:
 
 ```
-├── 🧠 Core Solvers (My Key Focus)
-│   ├── ga_solver.py      # Genetic Evolutionary Logic
-│   ├── pso_solver.py     # Swarm Intelligence / SPV Logic
-│   ├── aco_solver.py     # Pheromone Matrix Logic
-│   └── sa_solver.py      # Probabilistic Search Logic
-│
-├── 🔌 Service Layer (AI-Scaffolded)
-│   ├── fastapi_demo.py   # REST Endpoints
-│   └── static/           # Visualization Dashboard
-│
-└── 📊 Data Layer
-    └── Constraint Matrix & Job Times (Excel/Pandas)
+## 📂 Project Structure
+.
+├── main.py                 # Entry point (FastAPI App)
+├── app/
+│   ├── routers/            # API Endpoints (scheduler.py)
+│   └── utils/              # Helper functions
+├── solvers/                # Core Algorithm Logic (GA, PSO, ACO, SA)
+├── scripts/                # Utility scripts & comparisons
+├── data/                   # Configuration & Dataset (Excel)
+├── docs/                   # Documentation & Resume Guide
+├── matlab_legacy/          # Original Research Code (MATLAB)
+└── static/                 # Frontend Assets
 ```
 
 ## 🚀 Quick Start
@@ -70,8 +70,9 @@ The system follows a clean separation of concerns:
 1.  **Install & Run**:
     ```bash
     pip install -r requirements.txt
-    python main_portfolio.py
-    ```
+    ```bash
+   python main.py
+   ```
 2.  **Explore**:
     *   **Dashboard**: `http://localhost:8000/scheduler` (Run algorithms & visualize results)
     *   **API Docs**: `http://localhost:8000/docs`
