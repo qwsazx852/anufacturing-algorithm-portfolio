@@ -19,17 +19,22 @@
 ### 1. 限制條件處理 (Constraint Handling)
 *   **傳遞閉包矩陣 (Transitive Closure Matrix)**: 為了確保所有生成的排程都嚴格符合「工序 A 必須在工序 B 之前」的物理限制，我預先計算了所有工序的依賴關係矩陣，並在演算法生成解的過程中即時修復，保證解的可行性。
 
-### 2. 演算法實作細節
+### 2. 單目標演算法：裝配線平衡 (Single-Objective: Line Balancing)
+針對裝配線平衡問題 (ALBP)，目標是**最小化工作站數量 (Minimizing Workstations)** 或 **最小化循環時間 (Cycle Time)**。
 
 | 演算法 (Algorithm) | 核心技術與改良 (Key Contributions) | 適用場景 |
 | :--- | :--- | :--- |
 | **遺傳演算法 (GA)** | • **雙點交配 (Two-Point Crossover)** 結合修復機制<br>• **排序選擇 (Rank Selection)** 避免早熟收斂 | 組合優化問題的通用首選，全域搜尋能力強。 |
 | **粒子群演算法 (PSO)** | • **SPV (Smallest Position Value)** 規則：將連續的粒子速度向量映射為離散的工序排列<br>• 動態慣性權重調整 | 驗證連續型演算法在離散問題上的映射效率。 |
 | **蟻群演算法 (ACO)** | • **輪盤法 (Roulette Wheel)** 建構路徑<br>• 費洛蒙更新機制模擬工序順序的加強 | 適用於路徑依賴性強的順序決策問題。 |
-| **多目標優化 (NSGA-II)** | • **非凌駕排序 (Non-Dominated Sorting)**<br>• **擁擠距離 (Crowding Distance)** 計算<br>• **Pareto Front** 求解 | 同時追求「最大化利潤」與「最小化碳排」的雙目標決策。 |
 
-### 3. 特殊混合演算法
-*   **PSO + PPX Hybrid**: 針對拆解規劃問題，我結合了 PSO 的快速收斂特性與 PPX (Precedence Preserving Crossover) 的結構保留特性，開發了混合型演算法，在論文實驗中取得了優於傳統 NSGA-II 的 **Hypervolume (HV)** 收斂分數。
+### 3. 多目標演算法：選擇性拆解 (Multi-Objective: Disassembly)
+針對選擇性拆解規劃 (Selective Disassembly Planning)，需同時考量**最大化利潤 (Profit)** 與 **最小化碳足跡 (Carbon Footprint)**。
+
+| 演算法 (Algorithm) | 核心技術與改良 (Key Contributions) | 適用場景 |
+| :--- | :--- | :--- |
+| **NSGA-II** | • **非凌駕排序 (Non-Dominated Sorting)**<br>• **擁擠距離 (Crowding Distance)** 計算<br>• **Pareto Front** 求解 | 尋求多個目標間的最佳權衡解 (Trade-off Solutions)。 |
+| **PSO + PPX Hybrid** | • 結合 PSO 快速收斂與 PPX (Precedence Preserving Crossover) 的結構保留特性 | 在論文實驗中取得了優於傳統 NSGA-II 的 HV 分數。 |
 
 ---
 
