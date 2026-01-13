@@ -51,6 +51,48 @@
 *   **Backend**: Python (FastAPI) - 負責執行複雜的數學運算與演算法迭代。
 *   **Frontend**: HTML/JS/Chart.js - 負責將透過 API 回傳的數據轉化為收斂曲線與 Pareto 分佈圖。
 
+### 1. 系統流程圖 (System Workflow)
+
+```mermaid
+graph TD
+    Client[Web Dashboard / Client] <-->|JSON Request| API[FastAPI Logic Layer]
+    API -->|Dispatch| Engine[Optimization Engine]
+    
+    subgraph Core Solvers
+        Engine --> GA[Genetic Algorithm]
+        Engine --> PSO[Particle Swarm]
+        Engine --> NSGA[NSGA-II Multi-Objective]
+        Engine --> ACO[Ant Colony]
+    end
+    
+    subgraph Constraint Handling
+        GA & PSO & NSGA & ACO --> Decoder[Decoder & Repair]
+        Decoder <--> Matrix[Transitive Closure Matrix]
+    end
+    
+    Engine -->|Optimal Schedule| API
+```
+
+### 2. 專案結構 (Project Directory)
+
+```bash
+.
+├── main.py                 # 系統進入點 (System Entry Point)
+├── app/
+│   ├── routers/            # API 路由定義 (API Endpoints)
+│   └── utils/              # 資料轉換與輔助工具
+├── solvers/                # 核心演算法邏輯 (Core Algorithms)
+│   ├── ga_solver.py        # 遺傳演算法 (GA)
+│   ├── pso_solver.py       # 粒子群演算法 (PSO + SPV)
+│   ├── nsga2_solver.py     # 多目標優化 (NSGA-II)
+│   └── multi_objective_utils.py # Pareto Front 計算工具
+├── scripts/                # 獨立測試腳本 (Standalone Scripts)
+├── data/                   # 設定檔與測試資料 (Config & Datasets)
+├── docs/                   # 演算法詳細說明文件
+├── matlab_legacy/          # 原始研究代碼 (Original Research Code)
+└── static/                 # 前端介面資源 (Frontend Assets)
+```
+
 
 ### 快速開始 (Quick Start)
 
