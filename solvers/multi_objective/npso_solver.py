@@ -4,7 +4,7 @@ import numpy as np
 from typing import List, Tuple, Dict, Optional
 from ..problem_data import StaplerData
 from .multi_objective_utils import calculate_hypervolume_two, generate_hypervolume_samples, compute_pareto_front
-from .pso_solver import PSOSolver
+from ..single_objective.pso_solver import PSOSolver
 
 class NPSOSolver:
     """

@@ -28,8 +28,6 @@
 | **粒子群演算法 (PSO)** | • **SPV (Smallest Position Value)** 規則：將連續的粒子速度向量映射為離散的工序排列<br>• 動態慣性權重調整 | 驗證連續型演算法在離散問題上的映射效率。 |
 | **蟻群演算法 (ACO)** | • **輪盤法 (Roulette Wheel)** 建構路徑<br>• 費洛蒙更新機制模擬工序順序的加強 | 適用於路徑依賴性強的順序決策問題。 |
 | **模擬退火 (SA)** | • **Metropolis 準則** 接受劣解<br>• 溫度冷卻排程控制收斂速度 | 避免陷入區域最佳解，結構簡單且強健。 |
-| **非線性 PSO (NPSO)** | • 引入非線性慣性權重與學習因子<br>• 改善傳統 PSO 在後期收斂速度過慢的問題 | 針對高維度複雜問題的改良策略。 |
-| **區塊遺傳 (BlockGA)** | • 將染色體分塊演化<br>• 針對區域結構特徵進行局部搜索 | 適用於具有模組化特徵的排程問題。 |
 
 ### 3. 多目標演算法：選擇性拆解 (Multi-Objective: Disassembly)
 針對選擇性拆解規劃 (Selective Disassembly Planning)，需同時考量**最大化利潤 (Profit)** 與 **最小化碳足跡 (Carbon Footprint)**。
@@ -38,6 +36,8 @@
 | :--- | :--- | :--- |
 | **NSGA-II** | • **非凌駕排序 (Non-Dominated Sorting)**<br>• **擁擠距離 (Crowding Distance)** 計算<br>• **Pareto Front** 求解 | 尋求多個目標間的最佳權衡解 (Trade-off Solutions)。 |
 | **PSO + PPX Hybrid** | • 結合 PSO 快速收斂與 PPX (Precedence Preserving Crossover) 的結構保留特性 | 在論文實驗中取得了優於傳統 NSGA-II 的 HV 分數。 |
+| **非線性 PSO (NPSO)** | • 引入非線性慣性權重與學習因子<br>• 同時優化利潤與碳排 | 針對高維度複雜問題的改良策略。 |
+| **區塊遺傳 (BlockGA)** | • 將染色體分塊演化<br>• 針對區域結構特徵進行局部搜索 | 適用於具有模組化特徵的排程問題。 |
 | **K&G Algorithm** | • 經典的拆解規劃啟發式演算法<br>• 作為效能比較的 Baseline | 用於驗證新演算法在多目標拆解問題上的優越性。 |
 
 ---
