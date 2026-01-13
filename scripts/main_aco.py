@@ -7,7 +7,7 @@ parent_dir = os.path.dirname(current_dir)
 sys.path.append(parent_dir)
 
 from app.utils import data_adapter
-from solvers.aco_solver import ACOSolver
+from solvers.single_objective.aco_solver import ACOSolver
 import numpy as np
 import time
 import matplotlib.pyplot as plt

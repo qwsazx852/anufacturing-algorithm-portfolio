@@ -10,7 +10,7 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 parent_dir = os.path.dirname(current_dir)
 sys.path.append(parent_dir)
 
-from solvers.pso_ppx_solver import PSOPPXSolver
+from solvers.multi_objective.pso_ppx_solver import PSOPPXSolver
 from solvers.problem_data import StaplerData
 
 def main():

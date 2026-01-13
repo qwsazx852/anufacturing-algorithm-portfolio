@@ -8,16 +8,16 @@ parent_dir = os.path.dirname(current_dir)
 sys.path.append(parent_dir)
 
 from app.utils import data_adapter
-from solvers.ga_solver import GeneticOptimizer
-from solvers.pso_solver import PSOSolver
-from solvers.aco_solver import ACOSolver
-from solvers.sa_solver import SASolver
-from solvers.npso_solver import NPSOSolver
-from solvers.block_ga_solver import BlockGASolver
-from solvers.kg_solver import KGSolver
-from solvers.nsga2_solver import NSGA2Solver
-from solvers.nsga2_legacy_solver import NSGA2LegacySolver
-from solvers.pso_ppx_solver import PSOPPXSolver
+from solvers.single_objective.ga_solver import GeneticOptimizer
+from solvers.single_objective.pso_solver import PSOSolver
+from solvers.single_objective.aco_solver import ACOSolver
+from solvers.single_objective.sa_solver import SASolver
+from solvers.single_objective.npso_solver import NPSOSolver
+from solvers.multi_objective.block_ga_solver import BlockGASolver
+from solvers.multi_objective.kg_solver import KGSolver
+from solvers.multi_objective.nsga2_solver import NSGA2Solver
+from solvers.multi_objective.nsga2_legacy_solver import NSGA2LegacySolver
+from solvers.multi_objective.pso_ppx_solver import PSOPPXSolver
 import os
 import time
 import matplotlib.pyplot as plt

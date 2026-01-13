@@ -6,12 +6,12 @@ import time
 import numpy as np
 
 # Import Solvers
-from solvers.nsga2_solver import NSGA2Solver
-from solvers.nsga2_legacy_solver import NSGA2LegacySolver
-from solvers.pso_ppx_solver import PSOPPXSolver
-from solvers.npso_solver import NPSOSolver
-from solvers.kg_solver import KGSolver
-from solvers.block_ga_solver import BlockGASolver
+from solvers.multi_objective.nsga2_solver import NSGA2Solver
+from solvers.multi_objective.nsga2_legacy_solver import NSGA2LegacySolver
+from solvers.multi_objective.pso_ppx_solver import PSOPPXSolver
+from solvers.single_objective.npso_solver import NPSOSolver
+from solvers.multi_objective.kg_solver import KGSolver
+from solvers.multi_objective.block_ga_solver import BlockGASolver
 from solvers.problem_data import StaplerData, PrinterData
 
 router = APIRouter()

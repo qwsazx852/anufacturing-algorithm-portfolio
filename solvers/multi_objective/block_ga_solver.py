@@ -2,7 +2,7 @@
 import random
 import numpy as np
 from typing import List, Tuple, Dict, Optional
-from .problem_data import StaplerData
+from ..problem_data import StaplerData
 from .multi_objective_utils import calculate_hypervolume_two, generate_hypervolume_samples, compute_pareto_front
 import copy
 
@@ -25,7 +25,7 @@ class BlockGASolver:
         self.block_size_ratio = block_size_ratio
         
         # Helper Data
-        from .problem_data import StaplerData
+        from ..problem_data import StaplerData
         self.data = data_class if data_class else StaplerData
         self.num_jobs = self.data.NUM_PARTS
         

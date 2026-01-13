@@ -2,10 +2,10 @@ from fastapi import APIRouter, UploadFile, File
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
 from app.utils import data_adapter
-from solvers.ga_solver import GeneticOptimizer
-from solvers.pso_solver import PSOSolver
-from solvers.aco_solver import ACOSolver
-from solvers.sa_solver import SASolver
+from solvers.single_objective.ga_solver import GeneticOptimizer
+from solvers.single_objective.pso_solver import PSOSolver
+from solvers.single_objective.aco_solver import ACOSolver
+from solvers.single_objective.sa_solver import SASolver
 import os
 import shutil
 import time

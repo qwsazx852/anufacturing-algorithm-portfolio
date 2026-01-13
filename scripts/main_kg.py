@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 # Add parent directory to sys.path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from solvers.kg_solver import KGSolver
+from solvers.multi_objective.kg_solver import KGSolver
 
 def run_kg():
     print("=== K&G (Kang & GA) 選擇性拆解規劃優化 (Selective Disassembly Planning) ===")

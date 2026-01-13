@@ -91,10 +91,16 @@ graph TD
 │   ├── routers/            # API 路由定義 (API Endpoints)
 │   └── utils/              # 資料轉換與輔助工具
 ├── solvers/                # 核心演算法邏輯 (Core Algorithms)
-│   ├── ga_solver.py        # 遺傳演算法 (GA)
-│   ├── pso_solver.py       # 粒子群演算法 (PSO + SPV)
-│   ├── nsga2_solver.py     # 多目標優化 (NSGA-II)
-│   └── multi_objective_utils.py # Pareto Front 計算工具
+│   ├── problem_data.py     # 問題資料定義 (Problem Data Definitions)
+│   ├── single_objective/   # 單目標演算法 (Single-Objective)
+│   │   ├── ga_solver.py
+│   │   ├── pso_solver.py
+│   │   ├── aco_solver.py
+│   │   └── ...
+│   └── multi_objective/    # 多目標演算法 (Multi-Objective)
+│       ├── nsga2_solver.py
+│       ├── block_ga_solver.py
+│       └── pso_ppx_solver.py
 ├── scripts/                # 獨立測試腳本 (Standalone Scripts)
 ├── data/                   # 設定檔與測試資料 (Config & Datasets)
 ├── docs/                   # 演算法詳細說明文件

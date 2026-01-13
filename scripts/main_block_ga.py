@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 # Add parent directory to sys.path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from solvers.block_ga_solver import BlockGASolver
+from solvers.multi_objective.block_ga_solver import BlockGASolver
 
 def run_block_ga():
     print("=== Block-Based GA (多目標) 選擇性拆解規劃優化 (Selective Disassembly Planning) ===")

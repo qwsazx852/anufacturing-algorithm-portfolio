@@ -8,7 +8,7 @@ import numpy as np
 # Adjust path
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
-from solvers.nsga2_legacy_solver import NSGA2LegacySolver
+from solvers.multi_objective.nsga2_legacy_solver import NSGA2LegacySolver
 from solvers.problem_data import get_problem_data, StaplerData
 
 def main():

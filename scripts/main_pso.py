@@ -7,7 +7,7 @@ parent_dir = os.path.dirname(current_dir)
 sys.path.append(parent_dir)
 
 from app.utils import data_adapter
-from solvers.pso_solver import PSOSolver
+from solvers.single_objective.pso_solver import PSOSolver
 import numpy as np
 import time
 import matplotlib.pyplot as plt

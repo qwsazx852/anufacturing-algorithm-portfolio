@@ -8,7 +8,7 @@ import numpy as np
 # Adjust path
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
-from solvers.nsga2_solver import NSGA2Solver
+from solvers.multi_objective.nsga2_solver import NSGA2Solver
 from solvers.problem_data import get_problem_data, StaplerData, CeilingFanData, PrinterData
 
 def main():
