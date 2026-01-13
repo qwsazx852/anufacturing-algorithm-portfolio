@@ -1,81 +1,69 @@
-# 🧠 Meta-Heuristic Scheduling Optimization Engine
-> **A Comparative Research Platform for Solving NP-Hard Manufacturing Problems**
+# 智慧製造排程與拆解優化系統 (Intelligent Manufacturing Scheduling & Disassembly Optimization System)
+> **基於學術研究的 NP-Hard 製造排程問題解決方案**
 
 ![Python](https://img.shields.io/badge/Python-3.12-blue?style=flat&logo=python)
 ![Algorithm](https://img.shields.io/badge/Focus-Algorithm%20Design-orange?style=flat&logo=scipy)
-![Architecture](https://img.shields.io/badge/Architecture-AI--Assisted%20Microservice-green?style=flat)
+![Research](https://img.shields.io/badge/Origin-Academic%20Thesis-purple?style=flat)
 
-## � Project Focus & Role
-**Positioning**: Algorithm Engineer / Optimization Researcher
+## 📖 研究背景與動機 (Motivation)
+本專案源自於我在學期間的**碩士論文研究**，旨在解決製造業中經典且極具挑戰性的 **NP-Hard** 問題——**裝配線平衡問題 (Assembly Line Balancing Problem, ALBP)** 以及**選擇性拆解規劃 (Selective Disassembly Planning)**。
 
-This project was developed to demonstrate **advanced algorithmic problem solving** applied to real-world manufacturing constraints (Assembly Line Balancing Problem type-1). 
-
-### 👨‍💻 My Contribution: Core Algorithmic Logic
-My primary focus and manual implementation efforts were dedicated to the **mathematical modeling and optimization engine** located in the `*_solver.py` modules. Key technical challenges I solved include:
-
-1.  **Constraint Handling**: Designed a robust `Transitive Closure` matrix ensuring all generated schedules respect strict precedence constraints (Job A → Job B).
-2.  **Encoding Strategies**:
-    *   **GA**: Implemented custom 2-point crossover and "Repair" gene operators to maintain valid topological sorts.
-    *   **PSO**: Adapted continuous particle velocity vectors to discrete job sequences using the **SPV (Smallest Position Value)** rule.
-3.  **Convergence Tuning**: Fine-tuned hyperparameters (cooling rate, pheromone evaporation, inertia weights) to balance *Exploration* vs *Exploitation*.
-
-### ⚡ Engineering Methodology: Production-Grade Development
-To showcase these algorithms in a real-world context, I implemented a comprehensive full-stack architecture:
-- **FastAPI Backend**: High-performance REST API exposing the optimization solvers.
-- **Frontend Visualization**: Modern, responsive dashboard for real-time convergence monitoring and interactive experimentation.
-
-*This approach demonstrates my ability to bridge the gap between theoretical algorithm design and practical software engineering.*
-
-### 🔬 Provenance: Research to Production
-I initially prototyped and validated these algorithms in **MATLAB** to establish mathematical correctness before porting them to a production-grade Python microservice. This ensures the implementations are mathematically rigorous and optimized for performance.
-- **Legacy Research Code**: Available in the [`matlab_legacy/`](matlab_legacy/) directory for reference and validation.
+在實際生產環境中，如何在嚴格的**優先順序限制 (Precedence Constraints)** 下，最大化產線效率、最小化碳足跡並同時考量利潤，是一個極其複雜的多目標優化問題。本專案將我論文中的理論演算法轉化為可執行的 Python 引擎，驗證了其在複雜限制下的求解能力。
 
 ---
 
-## 🔍 The Algorithms
+## 🔬 演算法設計與核心技術 (Algorithm Design)
 
-I implemented and compared four distinct meta-heuristics from scratch (no "black-box" optimization libraries):
+本系統完全**從零實作 (From Scratch)** 了多種元啟發式演算法，並針對排程問題的特性進行了深度的客製化改良。重點不在於呼叫函式庫，而在於**編碼策略 (Encoding)** 與**運算子設計 (Operator Design)**。
 
-| Algorithm | Key Implementation Detail | Why I Chose It |
+### 1. 限制條件處理 (Constraint Handling)
+*   **傳遞閉包矩陣 (Transitive Closure Matrix)**: 為了確保所有生成的排程都嚴格符合「工序 A 必須在工序 B 之前」的物理限制，我預先計算了所有工序的依賴關係矩陣，並在演算法生成解的過程中即時修復，保證解的可行性。
+
+### 2. 演算法實作細節
+
+| 演算法 (Algorithm) | 核心技術與改良 (Key Contributions) | 適用場景 |
 | :--- | :--- | :--- |
-| **Genetic Algorithm (GA)** | Custom `Rank Selection` & `Order Crossover (OX)` | Best general performance for combinatorial problems. |
-| **Particle Swarm (PSO)** | **SPV Rule** implementation | To test continuous-to-discrete mapping efficiency. |
-| **Ant Colony (ACO)** | Probabilistic **Roulette Wheel** construction | Strong performance in graph-path based problems. |
-| **Simulated Annealing (SA)** | Boltzmann distribution acceptance probability | Baseline for single-solution trajectory search. |
+| **遺傳演算法 (GA)** | • **雙點交配 (Two-Point Crossover)** 結合修復機制<br>• **排序選擇 (Rank Selection)** 避免早熟收斂 | 組合優化問題的通用首選，全域搜尋能力強。 |
+| **粒子群演算法 (PSO)** | • **SPV (Smallest Position Value)** 規則：將連續的粒子速度向量映射為離散的工序排列<br>• 動態慣性權重調整 | 驗證連續型演算法在離散問題上的映射效率。 |
+| **蟻群演算法 (ACO)** | • **輪盤法 (Roulette Wheel)** 建構路徑<br>• 費洛蒙更新機制模擬工序順序的加強 | 適用於路徑依賴性強的順序決策問題。 |
+| **多目標優化 (NSGA-II)** | • **非凌駕排序 (Non-Dominated Sorting)**<br>• **擁擠距離 (Crowding Distance)** 計算<br>• **Pareto Front** 求解 | 同時追求「最大化利潤」與「最小化碳排」的雙目標決策。 |
 
-> **[📖 View Detailed Algorithmic Documentation & Benchmarks](ALGORITHM_DETAILS.md)**
+### 3. 特殊混合演算法
+*   **PSO + PPX Hybrid**: 針對拆解規劃問題，我結合了 PSO 的快速收斂特性與 PPX (Precedence Preserving Crossover) 的結構保留特性，開發了混合型演算法，在論文實驗中取得了優於傳統 NSGA-II 的 **Hypervolume (HV)** 收斂分數。
 
 ---
 
-## ️ System Architecture
-The system follows a clean separation of concerns:
+## � 研究成果與驗證 (Results & Validation)
 
+本系統將 MATLAB 原始研究代碼移植至 Python 後，經過大量測試數據驗證：
+1.  **收斂性驗證**: 透過動態圖表 (Convergence Plot) 證明各演算法隨著代數增加，Fitness Value 呈現穩定的下降（或上升）趨勢。
+2.  **Pareto 最優解**: 在多目標問題中，成功找出一組**互不隸屬 (Non-Dominated)** 的解集合，提供決策者多樣化的選擇（如：犧牲少量利潤換取大幅碳排減少）。
+3.  **基準測試**: 包含 NSGA-II (Standard), NSGA-II (Baseline), PSO-PPX 等多種配置的性能比較。
+
+*(原始 MATLAB 研究代碼保留於 `matlab_legacy/` 目錄中，以供學術查證。)*
+
+---
+
+## 💻 系統架構與展示 (System Architecture)
+
+為了便於展示與即時測試演算法效能，我構建了一個輕量級的 Web 介面。**請注意，Web 僅作為「演算法的視覺化載體」，本專案的核心價值在於後端的求解引擎。**
+
+*   **Backend**: Python (FastAPI) - 負責執行複雜的數學運算與演算法迭代。
+*   **Frontend**: HTML/JS/Chart.js - 負責將透過 API 回傳的數據轉化為收斂曲線與 Pareto 分佈圖。
+
+
+### 快速開始 (Quick Start)
+
+```bash
+# 安裝依賴
+pip install -r requirements.txt
+
+# 啟動系統
+python main.py
 ```
-## 📂 Project Structure
-.
-├── main.py                 # Entry point (FastAPI App)
-├── app/
-│   ├── routers/            # API Endpoints (scheduler.py)
-│   └── utils/              # Helper functions
-├── solvers/                # Core Algorithm Logic (GA, PSO, ACO, SA)
-├── scripts/                # Utility scripts & comparisons
-├── data/                   # Configuration & Dataset (Excel)
-├── docs/                   # Documentation & Resume Guide
-├── matlab_legacy/          # Original Research Code (MATLAB)
-└── static/                 # Frontend Assets
-```
 
-## 🚀 Quick Start
-
-1.  **Install & Run**:
-    ```bash
-    pip install -r requirements.txt
-    ```bash
-   python main.py
-   ```
-2.  **Explore**:
-    *   **Dashboard**: `http://localhost:8000/scheduler` (Run algorithms & visualize results)
-    *   **API Docs**: `http://localhost:8000/docs`
+*   **排程優化展示**: 瀏覽 `http://localhost:8000/scheduler`
+*   **多目標拆解展示**: 瀏覽 `http://localhost:8000/static/disassembly.html`
 
 ---
 *Created by [Jun] - 2025*
