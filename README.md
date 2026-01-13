@@ -67,19 +67,26 @@ graph TD
     Client[Web Dashboard / Client] <-->|JSON Request| API[FastAPI Logic Layer]
     API -->|Dispatch| Engine[Optimization Engine]
     
-    subgraph Core Solvers
-        Engine --> GA[Genetic Algorithm]
-        Engine --> PSO[Particle Swarm]
-        Engine --> NSGA[NSGA-II Multi-Objective]
-        Engine --> ACO[Ant Colony]
+    subgraph SingleObj [Single-Objective Solvers]
+        Engine --> GA[GA]
+        Engine --> PSO[PSO]
+        Engine --> ACO[ACO]
+        Engine --> SA[SA]
     end
     
-    subgraph Constraint Handling
-        GA & PSO & NSGA & ACO --> Decoder[Decoder & Repair]
+    subgraph MultiObj [Multi-Objective Solvers]
+        Engine --> NSGA[NSGA-II]
+        Engine --> NPSO[NPSO]
+        Engine --> BlockGA[BlockGA]
+        Engine --> PSOPPX[PSO-PPX]
+    end
+    
+    subgraph Constraints [Constraint Handling]
+        SingleObj & MultiObj --> Decoder[Decoder & Repair]
         Decoder <--> Matrix[Transitive Closure Matrix]
     end
     
-    Engine -->|Optimal Schedule| API
+    Engine -->|Optimal Schedule/Pareto Front| API
 ```
 
 ### 2. 專案結構 (Project Directory)
@@ -100,6 +107,7 @@ graph TD
 │   └── multi_objective/    # 多目標演算法 (Multi-Objective)
 │       ├── nsga2_solver.py
 │       ├── block_ga_solver.py
+│       ├── npso_solver.py
 │       └── pso_ppx_solver.py
 ├── scripts/                # 獨立測試腳本 (Standalone Scripts)
 ├── data/                   # 設定檔與測試資料 (Config & Datasets)
