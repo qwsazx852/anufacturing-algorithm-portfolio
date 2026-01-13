@@ -44,17 +44,69 @@ def main():
     print("Optimization Completed!")
     print(f"Time: {elapsed:.4f}s")
     
-    # Final Front
-    front = solver.get_pareto_front()
-    profits = [p[0] for p in front]
-    carbons = [p[1] for p in front]
+    print(f"Time: {elapsed:.4f}s")
     
-    # Sort for plotting
-    sorted_indices = np.argsort(profits)
-    profits = [profits[i] for i in sorted_indices]
-    carbons = [carbons[i] for i in sorted_indices]
+    # --- Detailed Results ---
+    # NSGA2Solver stores final population in self.population
+    # We need to extract the Non-Dominated Front from the final population
     
-    print(f"Non-dominated Solutions Found: {len(front)}")
+    final_pop = solver.population
+    pop_data = []
+    
+    # Calculate objectives for all
+    for chrom in final_pop:
+        p, c, k = solver.calculate_objectives(chrom)
+        pop_data.append({
+            'profit': p,
+            'carbon': c,
+            'cut_idx': k,
+            'stop_part': chrom[k-1] if k > 0 else "None",
+            'perm': chrom
+        })
+        
+    # Find Non-Dominated Set
+    non_dominated = []
+    for i in range(len(pop_data)):
+        is_dominated = False
+        p1 = pop_data[i]
+        for j in range(len(pop_data)):
+            if i == j: continue
+            p2 = pop_data[j]
+            # Dominated if p2 is better/equal in all AND strictly better in at least one
+            # Objectives: Max Profit, Min Carbon
+            # p2 better if p2.profit >= p1.profit AND p2.carbon <= p1.carbon
+            if (p2['profit'] >= p1['profit'] and p2['carbon'] <= p1['carbon']) and \
+               (p2['profit'] > p1['profit'] or p2['carbon'] < p1['carbon']):
+                is_dominated = True
+                break
+        if not is_dominated:
+            # Check duplicates based on objectives?
+            # Or just append. We'll filter duplicates by profit/carbon below to avoid clutter
+            non_dominated.append(p1)
+            
+    # Filter duplicates manually for display
+    unique_solutions = {}
+    for sol in non_dominated:
+        key = (round(sol['profit'], 4), round(sol['carbon'], 4))
+        if key not in unique_solutions:
+            unique_solutions[key] = sol
+            
+    sorted_sols = sorted(unique_solutions.values(), key=lambda x: x['profit'])
+    
+    print("-" * 80)
+    print(f"{'Profit':<10} | {'Carbon':<10} | {'Cut Idx':<8} | {'Stop Part':<10} | {'Sequence (First 10)'}")
+    print("-" * 80)
+    
+    profits = []
+    carbons = []
+    
+    for item in sorted_sols:
+        seq_str = str(item['perm'][:10]) + "..."
+        print(f"{item['profit']:<10.4f} | {item['carbon']:<10.4f} | {item['cut_idx']:<8} | {str(item['stop_part']):<10} | {seq_str}")
+        profits.append(item['profit'])
+        carbons.append(item['carbon'])
+        
+    print(f"Non-dominated Solutions Found: {len(sorted_sols)}")
     
     # Plot
     plt.figure(figsize=(10, 6))

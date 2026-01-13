@@ -43,17 +43,48 @@ def main():
     print("Optimization Completed!")
     print(f"Time: {elapsed:.4f}s")
     
-    # Final Front
-    front = solver.get_pareto_front()
-    profits = [p[0] for p in front]
-    carbons = [p[1] for p in front]
+    print(f"Time: {elapsed:.4f}s")
     
-    # Sort for plotting
-    sorted_indices = np.argsort(profits)
-    profits = [profits[i] for i in sorted_indices]
-    carbons = [carbons[i] for i in sorted_indices]
+    # --- Detailed Results Table ---
+    # Legacy Solver usage: archive_pop and archive_front are aligned.
+    final_perms = solver.archive_pop
+    final_objs = solver.archive_front
     
-    print(f"Non-dominated Solutions Found: {len(front)}")
+    pop_data = []
+    
+    for i in range(len(final_perms)):
+        perm = final_perms[i]
+        p = final_objs[i][0]
+        c = final_objs[i][1]
+        
+        # Calc Cut Idx
+        _, _, k = solver.calculate_objectives(perm)
+        
+        pop_data.append({
+            'profit': p,
+            'carbon': c,
+            'cut_idx': k,
+            'stop_part': perm[k-1] if k > 0 else "None",
+            'perm': perm
+        })
+        
+    # Sort
+    sorted_sols = sorted(pop_data, key=lambda x: x['profit'])
+    
+    print("-" * 80)
+    print(f"{'Profit':<10} | {'Carbon':<10} | {'Cut Idx':<8} | {'Stop Part':<10} | {'Sequence (First 10)'}")
+    print("-" * 80)
+    
+    profits = []
+    carbons = []
+    
+    for item in sorted_sols:
+        seq_str = str(item['perm'][:10]) + "..."
+        print(f"{item['profit']:<10.4f} | {item['carbon']:<10.4f} | {item['cut_idx']:<8} | {str(item['stop_part']):<10} | {seq_str}")
+        profits.append(item['profit'])
+        carbons.append(item['carbon'])
+        
+    print(f"Non-dominated Solutions Found: {len(sorted_sols)}")
     
     # Plot Side-by-Side
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 6))

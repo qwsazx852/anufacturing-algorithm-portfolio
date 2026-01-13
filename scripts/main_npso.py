@@ -60,6 +60,61 @@ def run_npso():
     print(f"保留/丟棄 ({len(remaining)}):       {remaining}")
     
     print(f"\n執行時間: {end_time - start_time:.4f} 秒")
+
+    # --- Detailed Results Table ---
+    # NPSO: Use pbest_X to find Pareto Front
+    pop_data = []
+    
+    # Iterate pbest
+    for i in range(npso.num_particles):
+        x_vec = npso.pbest_X[i]
+        # Decode
+        perm = npso._decode_position(x_vec)
+        perm = npso._repair_chromosome(perm)
+        # Calc
+        p, c, k = npso.calculate_objectives(perm)
+        pop_data.append({
+            'profit': p,
+            'carbon': c,
+            'cut_idx': k,
+            'stop_part': perm[k-1] if k > 0 else "None",
+            'perm': perm
+        })
+        
+    # Find Non-Dominated Set
+    non_dominated = []
+    for i in range(len(pop_data)):
+        is_dominated = False
+        p1 = pop_data[i]
+        for j in range(len(pop_data)):
+            if i == j: continue
+            p2 = pop_data[j]
+            # Max Profit, Min Carbon
+            if (p2['profit'] >= p1['profit'] and p2['carbon'] <= p1['carbon']) and \
+               (p2['profit'] > p1['profit'] or p2['carbon'] < p1['carbon']):
+                is_dominated = True
+                break
+        if not is_dominated:
+            non_dominated.append(p1)
+            
+    # Filter duplicates
+    unique_solutions = {}
+    for sol in non_dominated:
+        key = (round(sol['profit'], 4), round(sol['carbon'], 4))
+        if key not in unique_solutions:
+            unique_solutions[key] = sol
+            
+    sorted_sols = sorted(unique_solutions.values(), key=lambda x: x['profit'])
+    
+    print("-" * 80)
+    print(f"{'Profit':<10} | {'Carbon':<10} | {'Cut Idx':<8} | {'Stop Part':<10} | {'Sequence (First 10)'}")
+    print("-" * 80)
+    
+    for item in sorted_sols:
+        seq_str = str(item['perm'][:10]) + "..."
+        print(f"{item['profit']:<10.4f} | {item['carbon']:<10.4f} | {item['cut_idx']:<8} | {str(item['stop_part']):<10} | {seq_str}")
+        
+    print(f"Non-dominated Solutions Found: {len(sorted_sols)}")
     
     # 4. Plotting
     plot_npso_results(history_metrics, "NPSO 選擇性拆解規劃優化")

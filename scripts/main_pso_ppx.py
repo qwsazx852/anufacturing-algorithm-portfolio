@@ -29,7 +29,7 @@ def main():
         data_class=StaplerData
     )
     
-    print(f"Data: {StaplerData.name}")
+    print(f"Data: Stapler")
     print(f"Algorithm: PSO (Gen 0-{ns_start}) -> PSO+PPX Hybrid (Gen {ns_start}-{generations})")
     
     start_time = time.time()
@@ -57,8 +57,46 @@ def main():
     
     # Results
     print(f"Final HV: {hv_history[-1]:.4f}")
-    front = solver.get_pareto_front()
-    print(f"Pareto Front Size: {len(front)}")
+    
+    # Retrieve Archive
+    archive_perms = solver.archive_permutations
+    archive_objs = solver.archive_objs
+    
+    print(f"Pareto Front Size: {len(archive_objs)}")
+    print("-" * 80)
+    print(f"{'Profit':<10} | {'Carbon':<10} | {'Cut Idx':<8} | {'Stop Part':<10} | {'Sequence (First 10)'}")
+    print("-" * 80)
+    
+    front_data = []
+    
+    for i in range(len(archive_objs)):
+        perm = archive_perms[i]
+        profit, carbon = archive_objs[i]
+        
+        # Recalculate to get Cut Index
+        _, _, cut_idx = solver.calculate_objectives(perm)
+        
+        # Identify Stop Part (Last disassembled part)
+        # cut_idx is the number of parts disassembled (sequence[:cut_idx])
+        # So the last disassembled part is sequence[cut_idx - 1]
+        stop_part = perm[cut_idx - 1] if cut_idx > 0 else "None"
+        
+        front_data.append({
+            'profit': profit,
+            'carbon': carbon,
+            'cut_idx': cut_idx,
+            'stop_part': stop_part,
+            'perm': perm
+        })
+        
+    # Sort by Profit
+    front_data.sort(key=lambda x: x['profit'])
+    
+    for item in front_data:
+        seq_str = str(item['perm'][:10]) + "..."
+        print(f"{item['profit']:<10.4f} | {item['carbon']:<10.4f} | {item['cut_idx']:<8} | {str(item['stop_part']):<10} | {seq_str}")
+        
+    front = [(d['profit'], d['carbon']) for d in front_data]
     
     # Sort front for plotting
     front.sort(key=lambda x: x[0])

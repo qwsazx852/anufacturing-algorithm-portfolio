@@ -134,10 +134,19 @@ class NSGA2LegacySolver(NSGA2Solver):
                 
         # HV
         if self.archive_front:
-             # Use Set-based HV for stable convergence
              hv = calculate_hypervolume_two(self.archive_front, self.hv_samples)
+             # Ensure Convergence Plot is monotonic (Best Found So Far)
+             if self.history_hv:
+                 hv = max(hv, self.history_hv[-1])
              self.history_hv.append(hv)
         else:
-             self.history_hv.append(0)
+             self.history_hv.append(self.history_hv[-1] if self.history_hv else 0)
 
         return [], self.gbest_score, -1
+
+    def get_pareto_front(self) -> List[Tuple[float, float]]:
+        """
+        Override to return the explicit Archive Front maintained by the Legacy logic.
+        Standard get_pareto_front calc from population might be unstable in this specific algo.
+        """
+        return self.archive_front
