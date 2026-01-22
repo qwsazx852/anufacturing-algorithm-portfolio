@@ -1,0 +1,658 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "modelName": "models/gemini-3-flash-preview",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -352,
+        208
+      ],
+      "id": "08ca407c-ca94-476a-b72d-674a72e96d8c",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "AnZJMSp6dFblPj80",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=依照{{ $json.message.type }}判斷使用者輸入的訊息類型\n1.如果類型是\"text\":{{ $json.message.text }},就跟使用者正常聊天不用顯示類型資訊\n2.如果類型是\"image\":使用者上傳圖片data\n",
+        "options": {
+          "systemMessage": "=你是一個正妹個人行動助理你的名字是Sherry表達時要是活潑親切的，你的職責是協助使用者處理日常事務，你對我的稱呼為主人，你可以使用以下工具完成任務：\n可用工具\naccounting tool :用於記錄使用者的收支．當使用者要求記帳時，必須調用此工具，使用者需腰提供花費的描述和金額，日期會自動記錄為實時日期[YYYY/MM/DD]．現在的時間是：{{ $json.currentDate }}\nAccounting tool輸入範例：\n輸入日期：2026/1/19\n花費描述：買酒\n金額：200\nItinerary Planner：當我請你安排行程時請調用此工具，根據我輸入的時間安排相對應的時間行程．目前使用的時區為台灣台北，當前的時間為：{{ $json.currentDate }}\n＃圖片類型工作流程\n類型1:食物：判斷圖片中包含食物，飲料，餐點\n＊＊工作處理流程＊＊\n1.詳細便是圖片中的<主要食物項目>，<主要食物項目>應不大於5項（依熱量排序）\n2.<整份食物描述>為主要食物項目組成的字串，若字串長度大於20個字，只取前20個字\n3.估算每項<主要食物項目>的重量（單位：克）\n4.估算<整份食物>的總熱量（單位：千卡)和3大營養素總重（單位：克）\n5.先使用”saveFood\"工具\n6.再使用\"CalFood\"工具\n7.按照以下格式輸出食物描述：\nˋˋˋ\n  這是一份<整份食物描述>．包涵：\n  -[食物項目1]   約[重量]g\n  -[食物項目2]   約[重量]g\n  -總熱量：  kcal\n  -碳水化合物：  g\n  -蛋白質：   g\n  -脂肪：   g\n\n  -[今日總和]  \n  -[熱量]   約[]kal\n  -[碳水化合物]   約[]g\n  -[蛋白質]   約[]g\n  -[脂肪]   約[]g\nˋˋˋ\n",
+          "returnIntermediateSteps": true,
+          "passthroughBinaryImages": true
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -224,
+        0
+      ],
+      "id": "76781426-9f23-4150-b1b6-db6bea939c6e",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolWikipedia",
+      "typeVersion": 1,
+      "position": [
+        16,
+        208
+      ],
+      "id": "b5945fa2-d3fd-45cb-9225-7626d36b6bef",
+      "name": "Wikipedia"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolCalculator",
+      "typeVersion": 1,
+      "position": [
+        144,
+        208
+      ],
+      "id": "6e4382f5-9a72-4d03-bc25-634355ad1a6d",
+      "name": "Calculator"
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "每日記賬工具",
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1wraTdaip4LDlGhGdXVw0cMXGsc7yZHWqjVYib_ec_ww",
+          "mode": "list",
+          "cachedResultName": "n8n_accounting",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wraTdaip4LDlGhGdXVw0cMXGsc7yZHWqjVYib_ec_ww/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "2026",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wraTdaip4LDlGhGdXVw0cMXGsc7yZHWqjVYib_ec_ww/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "date": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('date', ``, 'string') }}",
+            "text": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('text', ``, 'string') }}",
+            "amount": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('amount', ``, 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "date",
+              "displayName": "date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "text",
+              "displayName": "text",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "amount",
+              "displayName": "amount",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        288,
+        208
+      ],
+      "id": "4f9130e4-5ff2-42f1-b77c-a015bd462fc4",
+      "name": "Accounting tool",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "9xiquqz04KOwvQyY",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "includeInputFields": true,
+          "timezone": "Asia/Taipei"
+        }
+      },
+      "type": "n8n-nodes-base.dateTime",
+      "typeVersion": 2,
+      "position": [
+        -400,
+        0
+      ],
+      "id": "e14bda5c-403c-49da-8f5f-c31023c5c594",
+      "name": "Date & Time"
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "qwsazx852@gmail.com",
+          "mode": "list",
+          "cachedResultName": "qwsazx852@gmail.com"
+        },
+        "start": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Start', ``, 'string') }}",
+        "end": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('End', ``, 'string') }}",
+        "additionalFields": {
+          "summary": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Summary', ``, 'string') }}"
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        464,
+        208
+      ],
+      "id": "46142a35-18e8-4f51-88da-4a42c195def0",
+      "name": "Itinerary Planner",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "Yi7oImrwZOlemi0Y",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "{\n  \"replyToken\": \"{{$('Edit Fields').first().json.replyToken}}\",\n  \"messages\": [\n    {\n      \"type\": \"text\",\n      \"text\": \"{{ $json.output.replaceAll('\\n','') }}\"\n    }\n  ]\n}"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        352,
+        -208
+      ],
+      "id": "4f53facb-8b91-4bbe-8084-14b847d7c01e",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "=#功能\n-接收下方json格式的食物資料，並進行資料儲存至google sheet(insert a row)\n#json格式的食物資料\n{\n\"date\":\"{{$now.format('yyyy-MM-dd')}}\",\n\"name\":<整份食物>的食物描述,\n\"calorles\":kcal,\n\"carbohydrate\":g,\n\"protein\":g,\n\"fat\":g,\n}",
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1GItb8KC7b2sdYyn5vx8xUyCMHNN9IRzMPydFROqsO3w",
+          "mode": "list",
+          "cachedResultName": "food",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1GItb8KC7b2sdYyn5vx8xUyCMHNN9IRzMPydFROqsO3w/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "工作表1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1GItb8KC7b2sdYyn5vx8xUyCMHNN9IRzMPydFROqsO3w/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "date": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('date', ``, 'string') }}",
+            "name": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('name', ``, 'string') }}",
+            "calories": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('calories', ``, 'string') }}",
+            "carbohydrate": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('carbohydrate', ``, 'string') }}",
+            "protein": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('protein', ``, 'string') }}",
+            "fat": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('fat', ``, 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "date",
+              "displayName": "date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "name",
+              "displayName": "name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "calories",
+              "displayName": "calories",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "carbohydrate",
+              "displayName": "carbohydrate",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "protein",
+              "displayName": "protein",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "fat",
+              "displayName": "fat",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        640,
+        224
+      ],
+      "id": "cb50b128-2a15-4792-a327-f1cb32cc8a8a",
+      "name": "saveFood",
+      "rewireOutputLogTo": "ai_tool",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "gwWNe4omOzKBcvFN",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "=#使用此工具，加總今日攝取的總熱量與3大營養素\n-用法：使用今日日期\"{{$now.format('yyyy-MM-dd')}}\",於\ngoogle sheet中取得今日所攝取的食物項目並加總今日攝取的總熱量與3大營養素",
+        "documentId": {
+          "__rl": true,
+          "value": "1GItb8KC7b2sdYyn5vx8xUyCMHNN9IRzMPydFROqsO3w",
+          "mode": "list",
+          "cachedResultName": "food",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1GItb8KC7b2sdYyn5vx8xUyCMHNN9IRzMPydFROqsO3w/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "工作表1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1GItb8KC7b2sdYyn5vx8xUyCMHNN9IRzMPydFROqsO3w/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "date",
+              "lookupValue": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('values0_Value', ``, 'string') }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        704,
+        112
+      ],
+      "id": "1942d939-7e41-40e1-9a2b-aeb483d2d657",
+      "name": "CalFood",
+      "rewireOutputLogTo": "ai_tool",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "gwWNe4omOzKBcvFN",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "replyToken": "={{ $('Line Messaging Trigger').item.json.replyToken }}",
+        "messages": {
+          "values": [
+            {
+              "text": "={{ $json.output }}"
+            }
+          ]
+        }
+      },
+      "type": "@aotoki/n8n-nodes-line-messaging.lineMessaging",
+      "typeVersion": 1,
+      "position": [
+        352,
+        0
+      ],
+      "id": "5f7f0edc-a2ff-48e0-a0f1-fa0114377a93",
+      "name": "Line Messaging",
+      "credentials": {
+        "lineMessagingApi": {
+          "id": "GYiYsrq8Li6aoUxQ",
+          "name": "Line Messaging account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "events": [
+          "*",
+          "message"
+        ]
+      },
+      "type": "@aotoki/n8n-nodes-line-messaging.lineMessagingTrigger",
+      "typeVersion": 1,
+      "position": [
+        -928,
+        -128
+      ],
+      "id": "8b7f0c5d-b2d6-4508-a8fc-55c6711657be",
+      "name": "Line Messaging Trigger",
+      "webhookId": "764c92d6-7d4d-438d-b2e5-836bf9bfe1d0",
+      "credentials": {
+        "lineMessagingApi": {
+          "id": "GYiYsrq8Li6aoUxQ",
+          "name": "Line Messaging account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "8c314d66-9f94-4fc0-b415-99e946464cf5",
+              "leftValue": "={{ $json.message.type }}",
+              "rightValue": "image",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -688,
+        -128
+      ],
+      "id": "64a2f6e2-8d55-4ae9-af14-2bbced515be6",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "messageId": "={{ $('Line Messaging Trigger').item.json.message.id }}",
+        "additionalOptions": {}
+      },
+      "type": "@aotoki/n8n-nodes-line-messaging.lineMessagingData",
+      "typeVersion": 1,
+      "position": [
+        -384,
+        -192
+      ],
+      "id": "367e47a0-5154-4773-abe4-df763459b159",
+      "name": "Line Messaging Data",
+      "credentials": {
+        "lineMessagingApi": {
+          "id": "GYiYsrq8Li6aoUxQ",
+          "name": "Line Messaging account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Line Messaging Trigger').item.json.source.userId }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -160,
+        208
+      ],
+      "id": "9a8a79f2-86b1-4123-8906-f8189a456ecd",
+      "name": "Simple Memory1"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        176,
+        0
+      ],
+      "id": "d87a2665-c0ff-4a3f-a350-104d7b993d90",
+      "name": "Merge"
+    }
+  ],
+  "connections": {
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Wikipedia": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculator": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Accounting tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Date & Time": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Itinerary Planner": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "saveFood": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CalFood": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Line Messaging Trigger": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Line Messaging Data",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Date & Time",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Line Messaging Data": {
+      "main": [
+        [
+          {
+            "node": "Date & Time",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory1": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Line Messaging",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "instanceId": "cad5d1ea20d48f793756ce305fd34cec8090ff6fd7be0b961b6807b328b205d3"
+  }
+}
