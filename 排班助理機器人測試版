@@ -1,0 +1,1564 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "modelName": "models/gemini-3-flash-preview",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -816,
+        624
+      ],
+      "id": "7e1a0fe4-1719-40ab-83d3-a0b8f065f4d6",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "AnZJMSp6dFblPj80",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=依照{{ $json.message.type }}判斷使用者輸入的訊息類型\n1.如果類型是\"text\":{{ $json.message.text }},就跟使用者正常聊天不用顯示類型資訊\n2.如果類型是\"image\":使用者上傳圖片data\n",
+        "options": {
+          "systemMessage": "=你是一個正妹個人行動助理你的名字是Sherry表達時要是活潑親切的，你的職責是協助使用者處理日常事務，你對我的稱呼為主人，你可以使用以下工具完成任務：\n可用工具\naccounting tool :用於記錄使用者的收支．當使用者要求記帳時，必須調用此工具，使用者需腰提供花費的描述和金額，日期會自動記錄為實時日期[YYYY/MM/DD]．現在的時間是：{{ $json.currentDate }}\nAccounting tool輸入範例：\n輸入日期：2026/1/19\n花費描述：買酒\n金額：200\nItinerary Planner：當我請你安排行程時請調用此工具，根據我輸入的時間安排相對應的時間行程．目前使用的時區為台灣台北，當前的時間為：{{ $json.currentDate }}\n＃圖片類型工作流程\n類型1:食物：判斷圖片中包含食物，飲料，餐點\n＊＊工作處理流程＊＊\n1.詳細便是圖片中的<主要食物項目>，<主要食物項目>應不大於5項（依熱量排序）\n2.<整份食物描述>為主要食物項目組成的字串，若字串長度大於20個字，只取前20個字\n3.估算每項<主要食物項目>的重量（單位：克）\n4.估算<整份食物>的總熱量（單位：千卡)和3大營養素總重（單位：克）\n5.先使用”saveFood\"工具\n6.再使用\"CalFood\"工具\n7.按照以下格式輸出食物描述：\nˋˋˋ\n  這是一份<整份食物描述>．包涵：\n  -[食物項目1]   約[重量]g\n  -[食物項目2]   約[重量]g\n  -總熱量：  kcal\n  -碳水化合物：  g\n  -蛋白質：   g\n  -脂肪：   g\n\n  -[今日總和]  \n  -[熱量]   約[]kal\n  -[碳水化合物]   約[]g\n  -[蛋白質]   約[]g\n  -[脂肪]   約[]g\nˋˋˋ\n",
+          "returnIntermediateSteps": true,
+          "passthroughBinaryImages": true
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -688,
+        416
+      ],
+      "id": "35574a16-3796-4ee3-ad03-f4b8ad89682b",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolWikipedia",
+      "typeVersion": 1,
+      "position": [
+        -448,
+        624
+      ],
+      "id": "9548ec64-70f5-47db-8cf7-de04ac841595",
+      "name": "Wikipedia"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolCalculator",
+      "typeVersion": 1,
+      "position": [
+        -320,
+        624
+      ],
+      "id": "e86cf8ae-af18-41ce-8f68-e454c3df2048",
+      "name": "Calculator"
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "每日記賬工具",
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1wraTdaip4LDlGhGdXVw0cMXGsc7yZHWqjVYib_ec_ww",
+          "mode": "list",
+          "cachedResultName": "n8n_accounting",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wraTdaip4LDlGhGdXVw0cMXGsc7yZHWqjVYib_ec_ww/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "2026",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wraTdaip4LDlGhGdXVw0cMXGsc7yZHWqjVYib_ec_ww/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "date": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('date', ``, 'string') }}",
+            "text": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('text', ``, 'string') }}",
+            "amount": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('amount', ``, 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "date",
+              "displayName": "date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "text",
+              "displayName": "text",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "amount",
+              "displayName": "amount",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        -176,
+        624
+      ],
+      "id": "181e7097-2ece-4438-b8c6-96aa3f3b267b",
+      "name": "Accounting tool",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "9xiquqz04KOwvQyY",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "includeInputFields": true,
+          "timezone": "Asia/Taipei"
+        }
+      },
+      "type": "n8n-nodes-base.dateTime",
+      "typeVersion": 2,
+      "position": [
+        -864,
+        416
+      ],
+      "id": "900ba3c5-7055-4802-82e8-9acb16472ece",
+      "name": "Date & Time"
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "qwsazx852@gmail.com",
+          "mode": "list",
+          "cachedResultName": "qwsazx852@gmail.com"
+        },
+        "start": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Start', ``, 'string') }}",
+        "end": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('End', ``, 'string') }}",
+        "additionalFields": {
+          "summary": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Summary', ``, 'string') }}"
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        624
+      ],
+      "id": "e9a3dcfc-27be-4d8a-8261-195e323135b6",
+      "name": "Itinerary Planner",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "Yi7oImrwZOlemi0Y",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "{\n  \"replyToken\": \"{{$('Edit Fields').first().json.replyToken}}\",\n  \"messages\": [\n    {\n      \"type\": \"text\",\n      \"text\": \"{{ $json.output.replaceAll('\\n','') }}\"\n    }\n  ]\n}"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -112,
+        208
+      ],
+      "id": "1c1ce0fc-b9d4-4fbd-a93d-800a44827626",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "=#功能\n-接收下方json格式的食物資料，並進行資料儲存至google sheet(insert a row)\n#json格式的食物資料\n{\n\"date\":\"{{$now.format('yyyy-MM-dd')}}\",\n\"name\":<整份食物>的食物描述,\n\"calorles\":kcal,\n\"carbohydrate\":g,\n\"protein\":g,\n\"fat\":g,\n}",
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1GItb8KC7b2sdYyn5vx8xUyCMHNN9IRzMPydFROqsO3w",
+          "mode": "list",
+          "cachedResultName": "food",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1GItb8KC7b2sdYyn5vx8xUyCMHNN9IRzMPydFROqsO3w/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "工作表1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1GItb8KC7b2sdYyn5vx8xUyCMHNN9IRzMPydFROqsO3w/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "date": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('date', ``, 'string') }}",
+            "name": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('name', ``, 'string') }}",
+            "calories": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('calories', ``, 'string') }}",
+            "carbohydrate": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('carbohydrate', ``, 'string') }}",
+            "protein": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('protein', ``, 'string') }}",
+            "fat": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('fat', ``, 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "date",
+              "displayName": "date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "name",
+              "displayName": "name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "calories",
+              "displayName": "calories",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "carbohydrate",
+              "displayName": "carbohydrate",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "protein",
+              "displayName": "protein",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "fat",
+              "displayName": "fat",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        176,
+        640
+      ],
+      "id": "bd6ee263-79b8-4be8-8d04-9103eb0abb06",
+      "name": "saveFood",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "gwWNe4omOzKBcvFN",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "=#使用此工具，加總今日攝取的總熱量與3大營養素\n-用法：使用今日日期\"{{$now.format('yyyy-MM-dd')}}\",於\ngoogle sheet中取得今日所攝取的食物項目並加總今日攝取的總熱量與3大營養素",
+        "documentId": {
+          "__rl": true,
+          "value": "1GItb8KC7b2sdYyn5vx8xUyCMHNN9IRzMPydFROqsO3w",
+          "mode": "list",
+          "cachedResultName": "food",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1GItb8KC7b2sdYyn5vx8xUyCMHNN9IRzMPydFROqsO3w/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "工作表1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1GItb8KC7b2sdYyn5vx8xUyCMHNN9IRzMPydFROqsO3w/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "date",
+              "lookupValue": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('values0_Value', ``, 'string') }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        240,
+        528
+      ],
+      "id": "7f3d6991-49a5-46e8-8ada-b22a0e38a853",
+      "name": "CalFood",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "gwWNe4omOzKBcvFN",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "replyToken": "={{ $('Line Messaging Trigger').item.json.replyToken }}",
+        "messages": {
+          "values": [
+            {
+              "text": "={{ $json.output }}"
+            }
+          ]
+        }
+      },
+      "type": "@aotoki/n8n-nodes-line-messaging.lineMessaging",
+      "typeVersion": 1,
+      "position": [
+        -112,
+        416
+      ],
+      "id": "18249424-ca17-40ff-898d-11cdfbd4f72d",
+      "name": "Line Messaging",
+      "credentials": {
+        "lineMessagingApi": {
+          "id": "GYiYsrq8Li6aoUxQ",
+          "name": "Line Messaging account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "events": [
+          "*",
+          "message"
+        ]
+      },
+      "type": "@aotoki/n8n-nodes-line-messaging.lineMessagingTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1328,
+        208
+      ],
+      "id": "64f7dc98-459d-4a65-85a7-b02eb8a9c5b0",
+      "name": "Line Messaging Trigger",
+      "webhookId": "2e31a347-2bc8-4eb8-816f-016f1d260c92",
+      "credentials": {
+        "lineMessagingApi": {
+          "id": "GYiYsrq8Li6aoUxQ",
+          "name": "Line Messaging account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "8c314d66-9f94-4fc0-b415-99e946464cf5",
+              "leftValue": "={{ $json.message.type }}",
+              "rightValue": "image",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -1136,
+        224
+      ],
+      "id": "f103138e-e44e-450b-93a6-fd49d20b67cc",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "messageId": "={{ $('Line Messaging Trigger').item.json.message.id }}",
+        "additionalOptions": {}
+      },
+      "type": "@aotoki/n8n-nodes-line-messaging.lineMessagingData",
+      "typeVersion": 1,
+      "position": [
+        -880,
+        160
+      ],
+      "id": "448c076e-51a6-47e8-bc8c-e152c8cc9d9d",
+      "name": "Line Messaging Data",
+      "credentials": {
+        "lineMessagingApi": {
+          "id": "GYiYsrq8Li6aoUxQ",
+          "name": "Line Messaging account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Line Messaging Trigger').item.json.source.userId }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -624,
+        624
+      ],
+      "id": "0c53b283-4517-4505-a3f6-045148e790b3",
+      "name": "Simple Memory1"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -288,
+        416
+      ],
+      "id": "07de0347-d634-400d-8afb-038094d141b5",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "url": "http://host.docker.internal:8000/simulate",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -1296,
+        -320
+      ],
+      "id": "5b8322e4-f618-40be-9470-dc084d5d3396",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "jsCode": "const response = items[0].json;\nconst flatSchedule = response.schedule_flat;\nconst dates = [...new Set(flatSchedule.map(item => item.date))].sort();\n\n// 找出所有出現過的人名，確保每個人都有欄位\nconst allPersons = [...new Set(flatSchedule.map(item => item.person))];\n\nconst result = [];\n\ndates.forEach(d => {\n    let dayRow = { \"日期\": d };\n    \n    // 先把所有人都設為空字串，避免 undefined\n    allPersons.forEach(p => {\n        dayRow[p] = \"\"; \n    });\n\n    const dayAssignments = flatSchedule.filter(item => item.date === d);\n    dayAssignments.forEach(assign => {\n        dayRow[assign.person] = assign.shift;\n    });\n    \n    result.push({ json: dayRow });\n});\n\nreturn result;\n\nreturn result;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1072,
+        -320
+      ],
+      "id": "2636d898-f812-4cb6-aa18-7d7b42ce9dee",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1Q6Zj10bCPwxdWhhlqiKSkxpg0ZtTZtCXaU3MYGJuy2E",
+          "mode": "list",
+          "cachedResultName": "中油班表",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Q6Zj10bCPwxdWhhlqiKSkxpg0ZtTZtCXaU3MYGJuy2E/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "工作表1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Q6Zj10bCPwxdWhhlqiKSkxpg0ZtTZtCXaU3MYGJuy2E/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "date": "={{ $json['日期'] }}",
+            "黃素珠": "={{ $json['黃素珠'] }}",
+            "賴桂蘭": "={{ $json['賴桂蘭'] }}",
+            "陳美娜": "={{ $json['陳美娜'] }}",
+            "吳誼婷": "={{ $json['吳誼婷'] }}",
+            "楊依如": "={{ $json['楊依如'] }}",
+            "陳彥銘": "={{ $json['陳彥銘'] }}",
+            "黃榮壹": "={{ $json['黃榮壹'] }}",
+            "吳靜蕙": "={{ $json['吳靜蕙'] }}",
+            "林群皓": "={{ $json['林群皓'] }}",
+            "陳怡芯": "={{ $json['陳怡芯'] }}",
+            "李巧如": "={{ $json['李巧如'] }}",
+            "鄭靜慧": "={{ $json['鄭靜慧'] }}",
+            "陳昱勳": "={{ $json['陳昱勳'] }}",
+            "林宏諺": "={{ $json['林宏諺'] }}"
+          },
+          "matchingColumns": [
+            "person"
+          ],
+          "schema": [
+            {
+              "id": "date",
+              "displayName": "date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "黃素珠",
+              "displayName": "黃素珠",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "賴桂蘭",
+              "displayName": "賴桂蘭",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "陳美娜",
+              "displayName": "陳美娜",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "吳誼婷",
+              "displayName": "吳誼婷",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "楊依如",
+              "displayName": "楊依如",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "陳彥銘",
+              "displayName": "陳彥銘",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "黃榮壹",
+              "displayName": "黃榮壹",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "吳靜蕙",
+              "displayName": "吳靜蕙",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "林群皓",
+              "displayName": "林群皓",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "陳怡芯",
+              "displayName": "陳怡芯",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "李巧如",
+              "displayName": "李巧如",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "鄭靜慧",
+              "displayName": "鄭靜慧",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "陳昱勳",
+              "displayName": "陳昱勳",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "林宏諺",
+              "displayName": "林宏諺",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -864,
+        -320
+      ],
+      "id": "17282271-e177-4c0d-98c1-887920708f57",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "9xiquqz04KOwvQyY",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "events": [
+          "*",
+          "message"
+        ]
+      },
+      "type": "@aotoki/n8n-nodes-line-messaging.lineMessagingTrigger",
+      "typeVersion": 1,
+      "position": [
+        -496,
+        -304
+      ],
+      "id": "ed89a981-0673-4c42-8763-d5692d5cbcdf",
+      "name": "Line Messaging Trigger2",
+      "webhookId": "2e31a347-2bc8-4eb8-816f-016f1d260c92",
+      "credentials": {
+        "lineMessagingApi": {
+          "id": "GYiYsrq8Li6aoUxQ",
+          "name": "Line Messaging account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "includeInputFields": true,
+          "timezone": "Asia/Taipei"
+        }
+      },
+      "type": "n8n-nodes-base.dateTime",
+      "typeVersion": 2,
+      "position": [
+        -288,
+        -304
+      ],
+      "id": "c9253690-37c8-44fd-80c7-ef66a416dfa7",
+      "name": "Date & Time1"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=依照{{ $json.message.type }}判斷使用者輸入的訊息類型\n1.如果類型是\"text\":{{ $json.message.text }},就跟使用者正常聊天不用顯示類型資訊\n2.如果類型是\"image\":使用者上傳圖片data\n",
+        "options": {
+          "systemMessage": "=你是一個正妹個人行動助理你的名字是Sherry表達時要是活潑親切的，你的職責是協助使用者處理日常事務，你對我的稱呼為主人，你可以使用以下工具完成任務：\n可用工具\naccounting tool :用於記錄使用者的收支．當使用者要求記帳時，必須調用此工具，使用者需腰提供花費的描述和金額，日期會自動記錄為實時日期[YYYY/MM/DD]．現在的時間是：{{ $json.currentDate }}\nAccounting tool輸入範例：\n輸入日期：2026/1/19\n花費描述：買酒\n金額：200\nItinerary Planner：當我請你安排行程時請調用此工具，根據我輸入的時間安排相對應的時間行程．目前使用的時區為台灣台北，當前的時間為：{{ $json.currentDate }}\n＃圖片類型工作流程\n類型1:食物：判斷圖片中包含食物，飲料，餐點\n＊＊工作處理流程＊＊\n1.詳細便是圖片中的<主要食物項目>，<主要食物項目>應不大於5項（依熱量排序）\n2.<整份食物描述>為主要食物項目組成的字串，若字串長度大於20個字，只取前20個字\n3.估算每項<主要食物項目>的重量（單位：克）\n4.估算<整份食物>的總熱量（單位：千卡)和3大營養素總重（單位：克）\n5.先使用”saveFood\"工具\n6.再使用\"CalFood\"工具\n7.按照以下格式輸出食物描述：\nˋˋˋ\n  這是一份<整份食物描述>．包涵：\n  -[食物項目1]   約[重量]g\n  -[食物項目2]   約[重量]g\n  -總熱量：  kcal\n  -碳水化合物：  g\n  -蛋白質：   g\n  -脂肪：   g\n\n  -[今日總和]  \n  -[熱量]   約[]kal\n  -[碳水化合物]   約[]g\n  -[蛋白質]   約[]g\n  -[脂肪]   約[]g\nˋˋˋ\n",
+          "returnIntermediateSteps": true,
+          "passthroughBinaryImages": true
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -96,
+        -304
+      ],
+      "id": "2cf48369-1c2e-4f1e-a392-9677ec679ede",
+      "name": "AI Agent1"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3-flash-preview",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -192,
+        -112
+      ],
+      "id": "d40c59a8-fe74-4be7-ae2c-959124f3afbb",
+      "name": "Google Gemini Chat Model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "AnZJMSp6dFblPj80",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Line Messaging Trigger').item.json.source.userId }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -48,
+        -112
+      ],
+      "id": "8832e686-1a30-4119-8d39-9d3fc976b35a",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolCalculator",
+      "typeVersion": 1,
+      "position": [
+        128,
+        -112
+      ],
+      "id": "7b6e7b23-4acd-4772-b516-64687e40756a",
+      "name": "Calculator1"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1Q6Zj10bCPwxdWhhlqiKSkxpg0ZtTZtCXaU3MYGJuy2E",
+          "mode": "list",
+          "cachedResultName": "中油班表",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Q6Zj10bCPwxdWhhlqiKSkxpg0ZtTZtCXaU3MYGJuy2E/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "工作表1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Q6Zj10bCPwxdWhhlqiKSkxpg0ZtTZtCXaU3MYGJuy2E/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "date",
+              "lookupValue": "2026-02-01"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Get Target Date Row",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4,
+      "position": [
+        736,
+        -144
+      ],
+      "id": "284ce70f-5a04-4131-a85d-d9b410efd833",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "9xiquqz04KOwvQyY",
+          "name": "Google Sheets account 2"
+        }
+      },
+      "notes": "模擬：輸入我們要修改的那一天 (2026-02-23)"
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "action",
+              "value": "SWAP"
+            },
+            {
+              "name": "person_a",
+              "value": "黃素珠"
+            },
+            {
+              "name": "person_b",
+              "value": "賴桂蘭"
+            },
+            {
+              "name": "target_date",
+              "value": "2026-02-01"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Mock User Input",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [
+        528,
+        -144
+      ],
+      "id": "1f776525-09dd-468f-b36f-b1a8c9f6d6ab",
+      "notes": "這裡模擬 LLM 解析出來的指令：要把 Emp1 和 Emp2 的班互換"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1Q6Zj10bCPwxdWhhlqiKSkxpg0ZtTZtCXaU3MYGJuy2E",
+          "mode": "list",
+          "cachedResultName": "中油班表",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Q6Zj10bCPwxdWhhlqiKSkxpg0ZtTZtCXaU3MYGJuy2E/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "工作表1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Q6Zj10bCPwxdWhhlqiKSkxpg0ZtTZtCXaU3MYGJuy2E/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "date",
+              "displayName": "date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "黃素珠",
+              "displayName": "黃素珠",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "賴桂蘭",
+              "displayName": "賴桂蘭",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "陳美娜",
+              "displayName": "陳美娜",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "吳誼婷",
+              "displayName": "吳誼婷",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "楊依如",
+              "displayName": "楊依如",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "陳彥銘",
+              "displayName": "陳彥銘",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "黃榮壹",
+              "displayName": "黃榮壹",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "吳靜蕙",
+              "displayName": "吳靜蕙",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "林群皓",
+              "displayName": "林群皓",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "陳怡芯",
+              "displayName": "陳怡芯",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "李巧如",
+              "displayName": "李巧如",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "鄭靜慧",
+              "displayName": "鄭靜慧",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "陳昱勳",
+              "displayName": "陳昱勳",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "林宏諺",
+              "displayName": "林宏諺",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "name": "Update Google Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4,
+      "position": [
+        1328,
+        -144
+      ],
+      "id": "26ad2b4f-5740-475a-873b-9e36ca2e0fb9",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "9xiquqz04KOwvQyY",
+          "name": "Google Sheets account 2"
+        }
+      },
+      "notes": "真正執行寫入：把 Emp1 換成 B 的班，Emp2 換成 A 的班"
+    },
+    {
+      "parameters": {
+        "jsCode": "// 取得 Google Sheet 讀進來的那一行資料 (目前的排班狀態)\nconst rowData = items[0].json;\nconst inputData = $('Mock User Input').first().json;\n\n// 我們要交換 A 和 B 的班\n// 1. 取得 A 目前的班\nconst currentShiftA = rowData[inputData.person_a];\n// 2. 取得 B 目前的班\nconst currentShiftB = rowData[inputData.person_b];\n\n// 3. 交換\nreturn [\n  {\n    json: {\n      ...inputData,\n      new_shift_a: currentShiftB, // A 換成 B 的班\n      new_shift_b: currentShiftA, // B 換成 A 的班\n      current_shift_a: currentShiftA,\n      current_shift_b: currentShiftB\n    }\n  }\n];"
+      },
+      "name": "Calculate New Shifts",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        960,
+        -144
+      ],
+      "id": "62f3e5fe-9aee-4186-8392-2c1482745d36"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://host.docker.internal:8000/validate",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "action",
+              "value": "SWAP"
+            },
+            {
+              "name": "person",
+              "value": "={{ $json.person_a }}"
+            },
+            {
+              "name": "target_person",
+              "value": "={{ $json.person_b }}"
+            },
+            {
+              "name": "date_str",
+              "value": "={{ $json.target_date }}"
+            },
+            {
+              "name": "shift",
+              "value": "={{ $json.new_shift_a }}"
+            },
+            {
+              "name": "current_schedule",
+              "value": {}
+            },
+            {
+              "name": "employees",
+              "value": []
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Run Verification",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [
+        1168,
+        -288
+      ],
+      "id": "631774a9-7b3b-4e10-a8ef-29f496341cad",
+      "notes": "呼叫 API 檢查 (這步只是拿來跳通知，不阻擋後面的 Update)"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1Q6Zj10bCPwxdWhhlqiKSkxpg0ZtTZtCXaU3MYGJuy2E",
+          "mode": "list",
+          "cachedResultName": "中油班表",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Q6Zj10bCPwxdWhhlqiKSkxpg0ZtTZtCXaU3MYGJuy2E/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "工作表1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Q6Zj10bCPwxdWhhlqiKSkxpg0ZtTZtCXaU3MYGJuy2E/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "date",
+              "lookupValue": "2026-02-01"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        336,
+        -112
+      ],
+      "id": "107ab942-6996-46c6-98f5-77ca1b03df94",
+      "name": "Get row(s) in sheet in Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "9xiquqz04KOwvQyY",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1472,
+        -320
+      ],
+      "id": "6cdb0744-f06e-48e7-89fa-7c19c9d4b81a",
+      "name": "When clicking ‘Execute workflow’"
+    }
+  ],
+  "connections": {
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Wikipedia": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculator": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Accounting tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Date & Time": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Itinerary Planner": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "saveFood": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CalFood": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Line Messaging Trigger": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Line Messaging Data",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Date & Time",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Line Messaging Data": {
+      "main": [
+        [
+          {
+            "node": "Date & Time",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory1": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Line Messaging",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Line Messaging Trigger2": {
+      "main": [
+        [
+          {
+            "node": "Date & Time1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Date & Time1": {
+      "main": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculator1": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Target Date Row": {
+      "main": [
+        [
+          {
+            "node": "Calculate New Shifts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mock User Input": {
+      "main": [
+        [
+          {
+            "node": "Get Target Date Row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculate New Shifts": {
+      "main": [
+        [
+          {
+            "node": "Run Verification",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Update Google Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet in Google Sheets": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {
+    "Line Messaging Trigger": [
+      {
+        "type": "message",
+        "message": {
+          "type": "text",
+          "id": "597542447895806007",
+          "quoteToken": "7851AT2WZuHkXiozVaqMi7rbSJjfJnh_Uav1iPmwyYfs5PpoftHS0AdO1C9JabMs6ZYap7oRH8GKWOtznj_i54dzTfFmb_H43cuQvloA_c688lSQDa-rx453LfJeyMDhz49XSaZy5yxF-GT17S4AAg",
+          "markAsReadToken": "r6aLQd_GeQ3c3VbzeGFnRmIi02_c926C-dM0XLNo9dj25RMu00wJumNqKIkiaO_hcImSkGUHtCKQi0h94rCtXhYNSPwA5BqETso25ej4EVhn-1cqlFehipvnP-aiKvno14I7-pdWTkNGaqQaaRYCIGw5L8q_7WM3h7_PwhINY9RthutA5lcspkH03l5yBrNmIgVZYsiAeAXdU_H1wbq2Qw",
+          "text": "在嗎"
+        },
+        "webhookEventId": "01KFG4FGBNAMQHCW03DP706S1Z",
+        "deliveryContext": {
+          "isRedelivery": false
+        },
+        "timestamp": 1768994357517,
+        "source": {
+          "type": "user",
+          "userId": "U14f392024e993b2a06fedd026ddcb5f2"
+        },
+        "replyToken": "25ffbcb18c974be3b21e432a11c4f9ec",
+        "mode": "active",
+        "destination": "Uc143c13acbf502f9a177811e0ec5cd30"
+      }
+    ],
+    "Line Messaging Trigger2": [
+      {
+        "type": "message",
+        "message": {
+          "type": "text",
+          "id": "597542447895806007",
+          "quoteToken": "7851AT2WZuHkXiozVaqMi7rbSJjfJnh_Uav1iPmwyYfs5PpoftHS0AdO1C9JabMs6ZYap7oRH8GKWOtznj_i54dzTfFmb_H43cuQvloA_c688lSQDa-rx453LfJeyMDhz49XSaZy5yxF-GT17S4AAg",
+          "markAsReadToken": "r6aLQd_GeQ3c3VbzeGFnRmIi02_c926C-dM0XLNo9dj25RMu00wJumNqKIkiaO_hcImSkGUHtCKQi0h94rCtXhYNSPwA5BqETso25ej4EVhn-1cqlFehipvnP-aiKvno14I7-pdWTkNGaqQaaRYCIGw5L8q_7WM3h7_PwhINY9RthutA5lcspkH03l5yBrNmIgVZYsiAeAXdU_H1wbq2Qw",
+          "text": "在嗎"
+        },
+        "webhookEventId": "01KFG4FGBNAMQHCW03DP706S1Z",
+        "deliveryContext": {
+          "isRedelivery": false
+        },
+        "timestamp": 1768994357517,
+        "source": {
+          "type": "user",
+          "userId": "U14f392024e993b2a06fedd026ddcb5f2"
+        },
+        "replyToken": "25ffbcb18c974be3b21e432a11c4f9ec",
+        "mode": "active",
+        "destination": "Uc143c13acbf502f9a177811e0ec5cd30"
+      }
+    ]
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "cad5d1ea20d48f793756ce305fd34cec8090ff6fd7be0b961b6807b328b205d3"
+  }
+}
